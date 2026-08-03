@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CarsIndexRouteImport } from './routes/cars.index'
 import { Route as CarsNewRouteImport } from './routes/cars.new'
+import { Route as CarsIdIndexRouteImport } from './routes/cars.$id.index'
+import { Route as CarsIdEditRouteImport } from './routes/cars.$id.edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +30,54 @@ const CarsNewRoute = CarsNewRouteImport.update({
   path: '/cars/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CarsIdIndexRoute = CarsIdIndexRouteImport.update({
+  id: '/cars/$id/',
+  path: '/cars/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarsIdEditRoute = CarsIdEditRouteImport.update({
+  id: '/cars/$id/edit',
+  path: '/cars/$id/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cars/new': typeof CarsNewRoute
   '/cars/': typeof CarsIndexRoute
+  '/cars/$id/edit': typeof CarsIdEditRoute
+  '/cars/$id/': typeof CarsIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cars/new': typeof CarsNewRoute
   '/cars': typeof CarsIndexRoute
+  '/cars/$id/edit': typeof CarsIdEditRoute
+  '/cars/$id': typeof CarsIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/cars/new': typeof CarsNewRoute
   '/cars/': typeof CarsIndexRoute
+  '/cars/$id/edit': typeof CarsIdEditRoute
+  '/cars/$id/': typeof CarsIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/cars/new' | '/cars/'
+  fullPaths: '/' | '/cars/new' | '/cars/' | '/cars/$id/edit' | '/cars/$id/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cars/new' | '/cars'
-  id: '__root__' | '/' | '/cars/new' | '/cars/'
+  to: '/' | '/cars/new' | '/cars' | '/cars/$id/edit' | '/cars/$id'
+  id:
+    '__root__' | '/' | '/cars/new' | '/cars/' | '/cars/$id/edit' | '/cars/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CarsNewRoute: typeof CarsNewRoute
   CarsIndexRoute: typeof CarsIndexRoute
+  CarsIdEditRoute: typeof CarsIdEditRoute
+  CarsIdIndexRoute: typeof CarsIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +103,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CarsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cars/$id/': {
+      id: '/cars/$id/'
+      path: '/cars/$id'
+      fullPath: '/cars/$id/'
+      preLoaderRoute: typeof CarsIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cars/$id/edit': {
+      id: '/cars/$id/edit'
+      path: '/cars/$id/edit'
+      fullPath: '/cars/$id/edit'
+      preLoaderRoute: typeof CarsIdEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +124,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CarsNewRoute: CarsNewRoute,
   CarsIndexRoute: CarsIndexRoute,
+  CarsIdEditRoute: CarsIdEditRoute,
+  CarsIdIndexRoute: CarsIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
