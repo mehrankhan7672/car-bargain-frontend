@@ -27,7 +27,9 @@ function ExpenseList() {
   const [rows, setRows] = useState<Expense[]>(seed);
 
   const total = rows.reduce((s, e) => s + e.amount, 0);
-  const biggest = rows.reduce((m, e) => (e.amount > m.amount ? e : m), rows[0]);
+  const biggest = rows.length
+    ? rows.reduce((m, e) => (e.amount > m.amount ? e : m))
+    : undefined;
 
   const remove = (e: Expense) => {
     setRows((prev) => prev.filter((x) => x.id !== e.id));
@@ -100,7 +102,7 @@ function ExpenseList() {
           label="Biggest Expense"
           value={biggest ? formatPKR(biggest.amount) : formatPKR(0)}
           icon={TrendingDown}
-          hint={biggest?.title}
+          hint={biggest ? biggest.title : "No expense yet"}
         />
       </div>
       <DataTable

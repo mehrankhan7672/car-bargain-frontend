@@ -16,12 +16,16 @@ import { Route as DealersIndexRouteImport } from './routes/dealers.index'
 import { Route as DealersNewRouteImport } from './routes/dealers.new'
 import { Route as ExchangesIndexRouteImport } from './routes/exchanges.index'
 import { Route as ExchangesNewRouteImport } from './routes/exchanges.new'
+import { Route as ExpensesIndexRouteImport } from './routes/expenses.index'
+import { Route as ExpensesNewRouteImport } from './routes/expenses.new'
 import { Route as CarsIdIndexRouteImport } from './routes/cars.$id.index'
 import { Route as CarsIdEditRouteImport } from './routes/cars.$id.edit'
 import { Route as DealersIdIndexRouteImport } from './routes/dealers.$id.index'
 import { Route as DealersIdEditRouteImport } from './routes/dealers.$id.edit'
 import { Route as ExchangesIdIndexRouteImport } from './routes/exchanges.$id.index'
 import { Route as ExchangesIdEditRouteImport } from './routes/exchanges.$id.edit'
+import { Route as ExpensesIdIndexRouteImport } from './routes/expenses.$id.index'
+import { Route as ExpensesIdEditRouteImport } from './routes/expenses.$id.edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +62,16 @@ const ExchangesNewRoute = ExchangesNewRouteImport.update({
   path: '/exchanges/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExpensesIndexRoute = ExpensesIndexRouteImport.update({
+  id: '/expenses/',
+  path: '/expenses/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpensesNewRoute = ExpensesNewRouteImport.update({
+  id: '/expenses/new',
+  path: '/expenses/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CarsIdIndexRoute = CarsIdIndexRouteImport.update({
   id: '/cars/$id/',
   path: '/cars/$id/',
@@ -88,36 +102,54 @@ const ExchangesIdEditRoute = ExchangesIdEditRouteImport.update({
   path: '/exchanges/$id/edit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExpensesIdIndexRoute = ExpensesIdIndexRouteImport.update({
+  id: '/expenses/$id/',
+  path: '/expenses/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpensesIdEditRoute = ExpensesIdEditRouteImport.update({
+  id: '/expenses/$id/edit',
+  path: '/expenses/$id/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cars/new': typeof CarsNewRoute
   '/dealers/new': typeof DealersNewRoute
   '/exchanges/new': typeof ExchangesNewRoute
+  '/expenses/new': typeof ExpensesNewRoute
   '/cars/': typeof CarsIndexRoute
   '/dealers/': typeof DealersIndexRoute
   '/exchanges/': typeof ExchangesIndexRoute
+  '/expenses/': typeof ExpensesIndexRoute
   '/cars/$id/edit': typeof CarsIdEditRoute
   '/dealers/$id/edit': typeof DealersIdEditRoute
   '/exchanges/$id/edit': typeof ExchangesIdEditRoute
+  '/expenses/$id/edit': typeof ExpensesIdEditRoute
   '/cars/$id/': typeof CarsIdIndexRoute
   '/dealers/$id/': typeof DealersIdIndexRoute
   '/exchanges/$id/': typeof ExchangesIdIndexRoute
+  '/expenses/$id/': typeof ExpensesIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cars/new': typeof CarsNewRoute
   '/dealers/new': typeof DealersNewRoute
   '/exchanges/new': typeof ExchangesNewRoute
+  '/expenses/new': typeof ExpensesNewRoute
   '/cars': typeof CarsIndexRoute
   '/dealers': typeof DealersIndexRoute
   '/exchanges': typeof ExchangesIndexRoute
+  '/expenses': typeof ExpensesIndexRoute
   '/cars/$id/edit': typeof CarsIdEditRoute
   '/dealers/$id/edit': typeof DealersIdEditRoute
   '/exchanges/$id/edit': typeof ExchangesIdEditRoute
+  '/expenses/$id/edit': typeof ExpensesIdEditRoute
   '/cars/$id': typeof CarsIdIndexRoute
   '/dealers/$id': typeof DealersIdIndexRoute
   '/exchanges/$id': typeof ExchangesIdIndexRoute
+  '/expenses/$id': typeof ExpensesIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,15 +157,19 @@ export interface FileRoutesById {
   '/cars/new': typeof CarsNewRoute
   '/dealers/new': typeof DealersNewRoute
   '/exchanges/new': typeof ExchangesNewRoute
+  '/expenses/new': typeof ExpensesNewRoute
   '/cars/': typeof CarsIndexRoute
   '/dealers/': typeof DealersIndexRoute
   '/exchanges/': typeof ExchangesIndexRoute
+  '/expenses/': typeof ExpensesIndexRoute
   '/cars/$id/edit': typeof CarsIdEditRoute
   '/dealers/$id/edit': typeof DealersIdEditRoute
   '/exchanges/$id/edit': typeof ExchangesIdEditRoute
+  '/expenses/$id/edit': typeof ExpensesIdEditRoute
   '/cars/$id/': typeof CarsIdIndexRoute
   '/dealers/$id/': typeof DealersIdIndexRoute
   '/exchanges/$id/': typeof ExchangesIdIndexRoute
+  '/expenses/$id/': typeof ExpensesIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -142,45 +178,57 @@ export interface FileRouteTypes {
     | '/cars/new'
     | '/dealers/new'
     | '/exchanges/new'
+    | '/expenses/new'
     | '/cars/'
     | '/dealers/'
     | '/exchanges/'
+    | '/expenses/'
     | '/cars/$id/edit'
     | '/dealers/$id/edit'
     | '/exchanges/$id/edit'
+    | '/expenses/$id/edit'
     | '/cars/$id/'
     | '/dealers/$id/'
     | '/exchanges/$id/'
+    | '/expenses/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/cars/new'
     | '/dealers/new'
     | '/exchanges/new'
+    | '/expenses/new'
     | '/cars'
     | '/dealers'
     | '/exchanges'
+    | '/expenses'
     | '/cars/$id/edit'
     | '/dealers/$id/edit'
     | '/exchanges/$id/edit'
+    | '/expenses/$id/edit'
     | '/cars/$id'
     | '/dealers/$id'
     | '/exchanges/$id'
+    | '/expenses/$id'
   id:
     | '__root__'
     | '/'
     | '/cars/new'
     | '/dealers/new'
     | '/exchanges/new'
+    | '/expenses/new'
     | '/cars/'
     | '/dealers/'
     | '/exchanges/'
+    | '/expenses/'
     | '/cars/$id/edit'
     | '/dealers/$id/edit'
     | '/exchanges/$id/edit'
+    | '/expenses/$id/edit'
     | '/cars/$id/'
     | '/dealers/$id/'
     | '/exchanges/$id/'
+    | '/expenses/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -188,15 +236,19 @@ export interface RootRouteChildren {
   CarsNewRoute: typeof CarsNewRoute
   DealersNewRoute: typeof DealersNewRoute
   ExchangesNewRoute: typeof ExchangesNewRoute
+  ExpensesNewRoute: typeof ExpensesNewRoute
   CarsIndexRoute: typeof CarsIndexRoute
   DealersIndexRoute: typeof DealersIndexRoute
   ExchangesIndexRoute: typeof ExchangesIndexRoute
+  ExpensesIndexRoute: typeof ExpensesIndexRoute
   CarsIdEditRoute: typeof CarsIdEditRoute
   DealersIdEditRoute: typeof DealersIdEditRoute
   ExchangesIdEditRoute: typeof ExchangesIdEditRoute
+  ExpensesIdEditRoute: typeof ExpensesIdEditRoute
   CarsIdIndexRoute: typeof CarsIdIndexRoute
   DealersIdIndexRoute: typeof DealersIdIndexRoute
   ExchangesIdIndexRoute: typeof ExchangesIdIndexRoute
+  ExpensesIdIndexRoute: typeof ExpensesIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -250,6 +302,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExchangesNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/expenses/': {
+      id: '/expenses/'
+      path: '/expenses'
+      fullPath: '/expenses/'
+      preLoaderRoute: typeof ExpensesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/expenses/new': {
+      id: '/expenses/new'
+      path: '/expenses/new'
+      fullPath: '/expenses/new'
+      preLoaderRoute: typeof ExpensesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cars/$id/': {
       id: '/cars/$id/'
       path: '/cars/$id'
@@ -292,6 +358,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExchangesIdEditRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/expenses/$id/': {
+      id: '/expenses/$id/'
+      path: '/expenses/$id'
+      fullPath: '/expenses/$id/'
+      preLoaderRoute: typeof ExpensesIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/expenses/$id/edit': {
+      id: '/expenses/$id/edit'
+      path: '/expenses/$id/edit'
+      fullPath: '/expenses/$id/edit'
+      preLoaderRoute: typeof ExpensesIdEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -300,15 +380,19 @@ const rootRouteChildren: RootRouteChildren = {
   CarsNewRoute: CarsNewRoute,
   DealersNewRoute: DealersNewRoute,
   ExchangesNewRoute: ExchangesNewRoute,
+  ExpensesNewRoute: ExpensesNewRoute,
   CarsIndexRoute: CarsIndexRoute,
   DealersIndexRoute: DealersIndexRoute,
   ExchangesIndexRoute: ExchangesIndexRoute,
+  ExpensesIndexRoute: ExpensesIndexRoute,
   CarsIdEditRoute: CarsIdEditRoute,
   DealersIdEditRoute: DealersIdEditRoute,
   ExchangesIdEditRoute: ExchangesIdEditRoute,
+  ExpensesIdEditRoute: ExpensesIdEditRoute,
   CarsIdIndexRoute: CarsIdIndexRoute,
   DealersIdIndexRoute: DealersIdIndexRoute,
   ExchangesIdIndexRoute: ExchangesIdIndexRoute,
+  ExpensesIdIndexRoute: ExpensesIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
