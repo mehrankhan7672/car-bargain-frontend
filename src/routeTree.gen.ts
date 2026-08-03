@@ -10,6 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BillingRouteImport } from './routes/billing'
+import { Route as SalariesRouteImport } from './routes/salaries'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as CarsIndexRouteImport } from './routes/cars.index'
 import { Route as CarsNewRouteImport } from './routes/cars.new'
 import { Route as DealersIndexRouteImport } from './routes/dealers.index'
@@ -34,6 +37,21 @@ import { Route as ExpensesIdEditRouteImport } from './routes/expenses.$id.edit'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BillingRoute = BillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalariesRoute = SalariesRouteImport.update({
+  id: '/salaries',
+  path: '/salaries',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CarsIndexRoute = CarsIndexRouteImport.update({
@@ -139,6 +157,9 @@ const ExpensesIdEditRoute = ExpensesIdEditRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/billing': typeof BillingRoute
+  '/salaries': typeof SalariesRoute
+  '/settings': typeof SettingsRoute
   '/cars/new': typeof CarsNewRoute
   '/dealers/new': typeof DealersNewRoute
   '/employees/new': typeof EmployeesNewRoute
@@ -162,6 +183,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/billing': typeof BillingRoute
+  '/salaries': typeof SalariesRoute
+  '/settings': typeof SettingsRoute
   '/cars/new': typeof CarsNewRoute
   '/dealers/new': typeof DealersNewRoute
   '/employees/new': typeof EmployeesNewRoute
@@ -186,6 +210,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/billing': typeof BillingRoute
+  '/salaries': typeof SalariesRoute
+  '/settings': typeof SettingsRoute
   '/cars/new': typeof CarsNewRoute
   '/dealers/new': typeof DealersNewRoute
   '/employees/new': typeof EmployeesNewRoute
@@ -211,6 +238,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/billing'
+    | '/salaries'
+    | '/settings'
     | '/cars/new'
     | '/dealers/new'
     | '/employees/new'
@@ -234,6 +264,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/billing'
+    | '/salaries'
+    | '/settings'
     | '/cars/new'
     | '/dealers/new'
     | '/employees/new'
@@ -257,6 +290,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/billing'
+    | '/salaries'
+    | '/settings'
     | '/cars/new'
     | '/dealers/new'
     | '/employees/new'
@@ -281,6 +317,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BillingRoute: typeof BillingRoute
+  SalariesRoute: typeof SalariesRoute
+  SettingsRoute: typeof SettingsRoute
   CarsNewRoute: typeof CarsNewRoute
   DealersNewRoute: typeof DealersNewRoute
   EmployeesNewRoute: typeof EmployeesNewRoute
@@ -310,6 +349,27 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/billing': {
+      id: '/billing'
+      path: '/billing'
+      fullPath: '/billing'
+      preLoaderRoute: typeof BillingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/salaries': {
+      id: '/salaries'
+      path: '/salaries'
+      fullPath: '/salaries'
+      preLoaderRoute: typeof SalariesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cars/': {
@@ -457,6 +517,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BillingRoute: BillingRoute,
+  SalariesRoute: SalariesRoute,
+  SettingsRoute: SettingsRoute,
   CarsNewRoute: CarsNewRoute,
   DealersNewRoute: DealersNewRoute,
   EmployeesNewRoute: EmployeesNewRoute,
