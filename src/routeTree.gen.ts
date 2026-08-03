@@ -14,6 +14,8 @@ import { Route as CarsIndexRouteImport } from './routes/cars.index'
 import { Route as CarsNewRouteImport } from './routes/cars.new'
 import { Route as DealersIndexRouteImport } from './routes/dealers.index'
 import { Route as DealersNewRouteImport } from './routes/dealers.new'
+import { Route as EmployeesIndexRouteImport } from './routes/employees.index'
+import { Route as EmployeesNewRouteImport } from './routes/employees.new'
 import { Route as ExchangesIndexRouteImport } from './routes/exchanges.index'
 import { Route as ExchangesNewRouteImport } from './routes/exchanges.new'
 import { Route as ExpensesIndexRouteImport } from './routes/expenses.index'
@@ -22,6 +24,8 @@ import { Route as CarsIdIndexRouteImport } from './routes/cars.$id.index'
 import { Route as CarsIdEditRouteImport } from './routes/cars.$id.edit'
 import { Route as DealersIdIndexRouteImport } from './routes/dealers.$id.index'
 import { Route as DealersIdEditRouteImport } from './routes/dealers.$id.edit'
+import { Route as EmployeesIdIndexRouteImport } from './routes/employees.$id.index'
+import { Route as EmployeesIdEditRouteImport } from './routes/employees.$id.edit'
 import { Route as ExchangesIdIndexRouteImport } from './routes/exchanges.$id.index'
 import { Route as ExchangesIdEditRouteImport } from './routes/exchanges.$id.edit'
 import { Route as ExpensesIdIndexRouteImport } from './routes/expenses.$id.index'
@@ -50,6 +54,16 @@ const DealersIndexRoute = DealersIndexRouteImport.update({
 const DealersNewRoute = DealersNewRouteImport.update({
   id: '/dealers/new',
   path: '/dealers/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployeesIndexRoute = EmployeesIndexRouteImport.update({
+  id: '/employees/',
+  path: '/employees/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployeesNewRoute = EmployeesNewRouteImport.update({
+  id: '/employees/new',
+  path: '/employees/new',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExchangesIndexRoute = ExchangesIndexRouteImport.update({
@@ -92,6 +106,16 @@ const DealersIdEditRoute = DealersIdEditRouteImport.update({
   path: '/dealers/$id/edit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmployeesIdIndexRoute = EmployeesIdIndexRouteImport.update({
+  id: '/employees/$id/',
+  path: '/employees/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployeesIdEditRoute = EmployeesIdEditRouteImport.update({
+  id: '/employees/$id/edit',
+  path: '/employees/$id/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExchangesIdIndexRoute = ExchangesIdIndexRouteImport.update({
   id: '/exchanges/$id/',
   path: '/exchanges/$id/',
@@ -117,18 +141,22 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cars/new': typeof CarsNewRoute
   '/dealers/new': typeof DealersNewRoute
+  '/employees/new': typeof EmployeesNewRoute
   '/exchanges/new': typeof ExchangesNewRoute
   '/expenses/new': typeof ExpensesNewRoute
   '/cars/': typeof CarsIndexRoute
   '/dealers/': typeof DealersIndexRoute
+  '/employees/': typeof EmployeesIndexRoute
   '/exchanges/': typeof ExchangesIndexRoute
   '/expenses/': typeof ExpensesIndexRoute
   '/cars/$id/edit': typeof CarsIdEditRoute
   '/dealers/$id/edit': typeof DealersIdEditRoute
+  '/employees/$id/edit': typeof EmployeesIdEditRoute
   '/exchanges/$id/edit': typeof ExchangesIdEditRoute
   '/expenses/$id/edit': typeof ExpensesIdEditRoute
   '/cars/$id/': typeof CarsIdIndexRoute
   '/dealers/$id/': typeof DealersIdIndexRoute
+  '/employees/$id/': typeof EmployeesIdIndexRoute
   '/exchanges/$id/': typeof ExchangesIdIndexRoute
   '/expenses/$id/': typeof ExpensesIdIndexRoute
 }
@@ -136,18 +164,22 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cars/new': typeof CarsNewRoute
   '/dealers/new': typeof DealersNewRoute
+  '/employees/new': typeof EmployeesNewRoute
   '/exchanges/new': typeof ExchangesNewRoute
   '/expenses/new': typeof ExpensesNewRoute
   '/cars': typeof CarsIndexRoute
   '/dealers': typeof DealersIndexRoute
+  '/employees': typeof EmployeesIndexRoute
   '/exchanges': typeof ExchangesIndexRoute
   '/expenses': typeof ExpensesIndexRoute
   '/cars/$id/edit': typeof CarsIdEditRoute
   '/dealers/$id/edit': typeof DealersIdEditRoute
+  '/employees/$id/edit': typeof EmployeesIdEditRoute
   '/exchanges/$id/edit': typeof ExchangesIdEditRoute
   '/expenses/$id/edit': typeof ExpensesIdEditRoute
   '/cars/$id': typeof CarsIdIndexRoute
   '/dealers/$id': typeof DealersIdIndexRoute
+  '/employees/$id': typeof EmployeesIdIndexRoute
   '/exchanges/$id': typeof ExchangesIdIndexRoute
   '/expenses/$id': typeof ExpensesIdIndexRoute
 }
@@ -156,18 +188,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/cars/new': typeof CarsNewRoute
   '/dealers/new': typeof DealersNewRoute
+  '/employees/new': typeof EmployeesNewRoute
   '/exchanges/new': typeof ExchangesNewRoute
   '/expenses/new': typeof ExpensesNewRoute
   '/cars/': typeof CarsIndexRoute
   '/dealers/': typeof DealersIndexRoute
+  '/employees/': typeof EmployeesIndexRoute
   '/exchanges/': typeof ExchangesIndexRoute
   '/expenses/': typeof ExpensesIndexRoute
   '/cars/$id/edit': typeof CarsIdEditRoute
   '/dealers/$id/edit': typeof DealersIdEditRoute
+  '/employees/$id/edit': typeof EmployeesIdEditRoute
   '/exchanges/$id/edit': typeof ExchangesIdEditRoute
   '/expenses/$id/edit': typeof ExpensesIdEditRoute
   '/cars/$id/': typeof CarsIdIndexRoute
   '/dealers/$id/': typeof DealersIdIndexRoute
+  '/employees/$id/': typeof EmployeesIdIndexRoute
   '/exchanges/$id/': typeof ExchangesIdIndexRoute
   '/expenses/$id/': typeof ExpensesIdIndexRoute
 }
@@ -177,18 +213,22 @@ export interface FileRouteTypes {
     | '/'
     | '/cars/new'
     | '/dealers/new'
+    | '/employees/new'
     | '/exchanges/new'
     | '/expenses/new'
     | '/cars/'
     | '/dealers/'
+    | '/employees/'
     | '/exchanges/'
     | '/expenses/'
     | '/cars/$id/edit'
     | '/dealers/$id/edit'
+    | '/employees/$id/edit'
     | '/exchanges/$id/edit'
     | '/expenses/$id/edit'
     | '/cars/$id/'
     | '/dealers/$id/'
+    | '/employees/$id/'
     | '/exchanges/$id/'
     | '/expenses/$id/'
   fileRoutesByTo: FileRoutesByTo
@@ -196,18 +236,22 @@ export interface FileRouteTypes {
     | '/'
     | '/cars/new'
     | '/dealers/new'
+    | '/employees/new'
     | '/exchanges/new'
     | '/expenses/new'
     | '/cars'
     | '/dealers'
+    | '/employees'
     | '/exchanges'
     | '/expenses'
     | '/cars/$id/edit'
     | '/dealers/$id/edit'
+    | '/employees/$id/edit'
     | '/exchanges/$id/edit'
     | '/expenses/$id/edit'
     | '/cars/$id'
     | '/dealers/$id'
+    | '/employees/$id'
     | '/exchanges/$id'
     | '/expenses/$id'
   id:
@@ -215,18 +259,22 @@ export interface FileRouteTypes {
     | '/'
     | '/cars/new'
     | '/dealers/new'
+    | '/employees/new'
     | '/exchanges/new'
     | '/expenses/new'
     | '/cars/'
     | '/dealers/'
+    | '/employees/'
     | '/exchanges/'
     | '/expenses/'
     | '/cars/$id/edit'
     | '/dealers/$id/edit'
+    | '/employees/$id/edit'
     | '/exchanges/$id/edit'
     | '/expenses/$id/edit'
     | '/cars/$id/'
     | '/dealers/$id/'
+    | '/employees/$id/'
     | '/exchanges/$id/'
     | '/expenses/$id/'
   fileRoutesById: FileRoutesById
@@ -235,18 +283,22 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CarsNewRoute: typeof CarsNewRoute
   DealersNewRoute: typeof DealersNewRoute
+  EmployeesNewRoute: typeof EmployeesNewRoute
   ExchangesNewRoute: typeof ExchangesNewRoute
   ExpensesNewRoute: typeof ExpensesNewRoute
   CarsIndexRoute: typeof CarsIndexRoute
   DealersIndexRoute: typeof DealersIndexRoute
+  EmployeesIndexRoute: typeof EmployeesIndexRoute
   ExchangesIndexRoute: typeof ExchangesIndexRoute
   ExpensesIndexRoute: typeof ExpensesIndexRoute
   CarsIdEditRoute: typeof CarsIdEditRoute
   DealersIdEditRoute: typeof DealersIdEditRoute
+  EmployeesIdEditRoute: typeof EmployeesIdEditRoute
   ExchangesIdEditRoute: typeof ExchangesIdEditRoute
   ExpensesIdEditRoute: typeof ExpensesIdEditRoute
   CarsIdIndexRoute: typeof CarsIdIndexRoute
   DealersIdIndexRoute: typeof DealersIdIndexRoute
+  EmployeesIdIndexRoute: typeof EmployeesIdIndexRoute
   ExchangesIdIndexRoute: typeof ExchangesIdIndexRoute
   ExpensesIdIndexRoute: typeof ExpensesIdIndexRoute
 }
@@ -286,6 +338,20 @@ declare module '@tanstack/react-router' {
       path: '/dealers/new'
       fullPath: '/dealers/new'
       preLoaderRoute: typeof DealersNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employees/': {
+      id: '/employees/'
+      path: '/employees'
+      fullPath: '/employees/'
+      preLoaderRoute: typeof EmployeesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employees/new': {
+      id: '/employees/new'
+      path: '/employees/new'
+      fullPath: '/employees/new'
+      preLoaderRoute: typeof EmployeesNewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/exchanges/': {
@@ -344,6 +410,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DealersIdEditRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/employees/$id/': {
+      id: '/employees/$id/'
+      path: '/employees/$id'
+      fullPath: '/employees/$id/'
+      preLoaderRoute: typeof EmployeesIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employees/$id/edit': {
+      id: '/employees/$id/edit'
+      path: '/employees/$id/edit'
+      fullPath: '/employees/$id/edit'
+      preLoaderRoute: typeof EmployeesIdEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/exchanges/$id/': {
       id: '/exchanges/$id/'
       path: '/exchanges/$id'
@@ -379,18 +459,22 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CarsNewRoute: CarsNewRoute,
   DealersNewRoute: DealersNewRoute,
+  EmployeesNewRoute: EmployeesNewRoute,
   ExchangesNewRoute: ExchangesNewRoute,
   ExpensesNewRoute: ExpensesNewRoute,
   CarsIndexRoute: CarsIndexRoute,
   DealersIndexRoute: DealersIndexRoute,
+  EmployeesIndexRoute: EmployeesIndexRoute,
   ExchangesIndexRoute: ExchangesIndexRoute,
   ExpensesIndexRoute: ExpensesIndexRoute,
   CarsIdEditRoute: CarsIdEditRoute,
   DealersIdEditRoute: DealersIdEditRoute,
+  EmployeesIdEditRoute: EmployeesIdEditRoute,
   ExchangesIdEditRoute: ExchangesIdEditRoute,
   ExpensesIdEditRoute: ExpensesIdEditRoute,
   CarsIdIndexRoute: CarsIdIndexRoute,
   DealersIdIndexRoute: DealersIdIndexRoute,
+  EmployeesIdIndexRoute: EmployeesIdIndexRoute,
   ExchangesIdIndexRoute: ExchangesIdIndexRoute,
   ExpensesIdIndexRoute: ExpensesIdIndexRoute,
 }
