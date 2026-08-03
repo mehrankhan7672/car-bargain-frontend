@@ -13,6 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BillingRouteImport } from './routes/billing'
 import { Route as SalariesRouteImport } from './routes/salaries'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
+import { Route as AuthSigninRouteImport } from './routes/auth.signin'
+import { Route as AuthSignupRouteImport } from './routes/auth.signup'
 import { Route as CarsIndexRouteImport } from './routes/cars.index'
 import { Route as CarsNewRouteImport } from './routes/cars.new'
 import { Route as DealersIndexRouteImport } from './routes/dealers.index'
@@ -52,6 +55,21 @@ const SalariesRoute = SalariesRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/auth/forgot-password',
+  path: '/auth/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSigninRoute = AuthSigninRouteImport.update({
+  id: '/auth/signin',
+  path: '/auth/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSignupRoute = AuthSignupRouteImport.update({
+  id: '/auth/signup',
+  path: '/auth/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CarsIndexRoute = CarsIndexRouteImport.update({
@@ -160,6 +178,9 @@ export interface FileRoutesByFullPath {
   '/billing': typeof BillingRoute
   '/salaries': typeof SalariesRoute
   '/settings': typeof SettingsRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/signin': typeof AuthSigninRoute
+  '/auth/signup': typeof AuthSignupRoute
   '/cars/new': typeof CarsNewRoute
   '/dealers/new': typeof DealersNewRoute
   '/employees/new': typeof EmployeesNewRoute
@@ -186,6 +207,9 @@ export interface FileRoutesByTo {
   '/billing': typeof BillingRoute
   '/salaries': typeof SalariesRoute
   '/settings': typeof SettingsRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/signin': typeof AuthSigninRoute
+  '/auth/signup': typeof AuthSignupRoute
   '/cars/new': typeof CarsNewRoute
   '/dealers/new': typeof DealersNewRoute
   '/employees/new': typeof EmployeesNewRoute
@@ -213,6 +237,9 @@ export interface FileRoutesById {
   '/billing': typeof BillingRoute
   '/salaries': typeof SalariesRoute
   '/settings': typeof SettingsRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/signin': typeof AuthSigninRoute
+  '/auth/signup': typeof AuthSignupRoute
   '/cars/new': typeof CarsNewRoute
   '/dealers/new': typeof DealersNewRoute
   '/employees/new': typeof EmployeesNewRoute
@@ -241,6 +268,9 @@ export interface FileRouteTypes {
     | '/billing'
     | '/salaries'
     | '/settings'
+    | '/auth/forgot-password'
+    | '/auth/signin'
+    | '/auth/signup'
     | '/cars/new'
     | '/dealers/new'
     | '/employees/new'
@@ -267,6 +297,9 @@ export interface FileRouteTypes {
     | '/billing'
     | '/salaries'
     | '/settings'
+    | '/auth/forgot-password'
+    | '/auth/signin'
+    | '/auth/signup'
     | '/cars/new'
     | '/dealers/new'
     | '/employees/new'
@@ -293,6 +326,9 @@ export interface FileRouteTypes {
     | '/billing'
     | '/salaries'
     | '/settings'
+    | '/auth/forgot-password'
+    | '/auth/signin'
+    | '/auth/signup'
     | '/cars/new'
     | '/dealers/new'
     | '/employees/new'
@@ -320,6 +356,9 @@ export interface RootRouteChildren {
   BillingRoute: typeof BillingRoute
   SalariesRoute: typeof SalariesRoute
   SettingsRoute: typeof SettingsRoute
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthSigninRoute: typeof AuthSigninRoute
+  AuthSignupRoute: typeof AuthSignupRoute
   CarsNewRoute: typeof CarsNewRoute
   DealersNewRoute: typeof DealersNewRoute
   EmployeesNewRoute: typeof EmployeesNewRoute
@@ -370,6 +409,27 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/auth/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/signin': {
+      id: '/auth/signin'
+      path: '/auth/signin'
+      fullPath: '/auth/signin'
+      preLoaderRoute: typeof AuthSigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/signup': {
+      id: '/auth/signup'
+      path: '/auth/signup'
+      fullPath: '/auth/signup'
+      preLoaderRoute: typeof AuthSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cars/': {
@@ -520,6 +580,9 @@ const rootRouteChildren: RootRouteChildren = {
   BillingRoute: BillingRoute,
   SalariesRoute: SalariesRoute,
   SettingsRoute: SettingsRoute,
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthSigninRoute: AuthSigninRoute,
+  AuthSignupRoute: AuthSignupRoute,
   CarsNewRoute: CarsNewRoute,
   DealersNewRoute: DealersNewRoute,
   EmployeesNewRoute: EmployeesNewRoute,
@@ -544,3 +607,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
