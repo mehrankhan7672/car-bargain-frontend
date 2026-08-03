@@ -10,33 +10,375 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BillingRouteImport } from './routes/billing'
+import { Route as SalariesRouteImport } from './routes/salaries'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
+import { Route as AuthSigninRouteImport } from './routes/auth.signin'
+import { Route as AuthSignupRouteImport } from './routes/auth.signup'
+import { Route as CarsIndexRouteImport } from './routes/cars.index'
+import { Route as CarsNewRouteImport } from './routes/cars.new'
+import { Route as DealersIndexRouteImport } from './routes/dealers.index'
+import { Route as DealersNewRouteImport } from './routes/dealers.new'
+import { Route as EmployeesIndexRouteImport } from './routes/employees.index'
+import { Route as EmployeesNewRouteImport } from './routes/employees.new'
+import { Route as ExchangesIndexRouteImport } from './routes/exchanges.index'
+import { Route as ExchangesNewRouteImport } from './routes/exchanges.new'
+import { Route as ExpensesIndexRouteImport } from './routes/expenses.index'
+import { Route as ExpensesNewRouteImport } from './routes/expenses.new'
+import { Route as CarsIdIndexRouteImport } from './routes/cars.$id.index'
+import { Route as CarsIdEditRouteImport } from './routes/cars.$id.edit'
+import { Route as DealersIdIndexRouteImport } from './routes/dealers.$id.index'
+import { Route as DealersIdEditRouteImport } from './routes/dealers.$id.edit'
+import { Route as EmployeesIdIndexRouteImport } from './routes/employees.$id.index'
+import { Route as EmployeesIdEditRouteImport } from './routes/employees.$id.edit'
+import { Route as ExchangesIdIndexRouteImport } from './routes/exchanges.$id.index'
+import { Route as ExchangesIdEditRouteImport } from './routes/exchanges.$id.edit'
+import { Route as ExpensesIdIndexRouteImport } from './routes/expenses.$id.index'
+import { Route as ExpensesIdEditRouteImport } from './routes/expenses.$id.edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BillingRoute = BillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalariesRoute = SalariesRouteImport.update({
+  id: '/salaries',
+  path: '/salaries',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/auth/forgot-password',
+  path: '/auth/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSigninRoute = AuthSigninRouteImport.update({
+  id: '/auth/signin',
+  path: '/auth/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSignupRoute = AuthSignupRouteImport.update({
+  id: '/auth/signup',
+  path: '/auth/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarsIndexRoute = CarsIndexRouteImport.update({
+  id: '/cars/',
+  path: '/cars/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarsNewRoute = CarsNewRouteImport.update({
+  id: '/cars/new',
+  path: '/cars/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealersIndexRoute = DealersIndexRouteImport.update({
+  id: '/dealers/',
+  path: '/dealers/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealersNewRoute = DealersNewRouteImport.update({
+  id: '/dealers/new',
+  path: '/dealers/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployeesIndexRoute = EmployeesIndexRouteImport.update({
+  id: '/employees/',
+  path: '/employees/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployeesNewRoute = EmployeesNewRouteImport.update({
+  id: '/employees/new',
+  path: '/employees/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExchangesIndexRoute = ExchangesIndexRouteImport.update({
+  id: '/exchanges/',
+  path: '/exchanges/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExchangesNewRoute = ExchangesNewRouteImport.update({
+  id: '/exchanges/new',
+  path: '/exchanges/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpensesIndexRoute = ExpensesIndexRouteImport.update({
+  id: '/expenses/',
+  path: '/expenses/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpensesNewRoute = ExpensesNewRouteImport.update({
+  id: '/expenses/new',
+  path: '/expenses/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarsIdIndexRoute = CarsIdIndexRouteImport.update({
+  id: '/cars/$id/',
+  path: '/cars/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarsIdEditRoute = CarsIdEditRouteImport.update({
+  id: '/cars/$id/edit',
+  path: '/cars/$id/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealersIdIndexRoute = DealersIdIndexRouteImport.update({
+  id: '/dealers/$id/',
+  path: '/dealers/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealersIdEditRoute = DealersIdEditRouteImport.update({
+  id: '/dealers/$id/edit',
+  path: '/dealers/$id/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployeesIdIndexRoute = EmployeesIdIndexRouteImport.update({
+  id: '/employees/$id/',
+  path: '/employees/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployeesIdEditRoute = EmployeesIdEditRouteImport.update({
+  id: '/employees/$id/edit',
+  path: '/employees/$id/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExchangesIdIndexRoute = ExchangesIdIndexRouteImport.update({
+  id: '/exchanges/$id/',
+  path: '/exchanges/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExchangesIdEditRoute = ExchangesIdEditRouteImport.update({
+  id: '/exchanges/$id/edit',
+  path: '/exchanges/$id/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpensesIdIndexRoute = ExpensesIdIndexRouteImport.update({
+  id: '/expenses/$id/',
+  path: '/expenses/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpensesIdEditRoute = ExpensesIdEditRouteImport.update({
+  id: '/expenses/$id/edit',
+  path: '/expenses/$id/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/billing': typeof BillingRoute
+  '/salaries': typeof SalariesRoute
+  '/settings': typeof SettingsRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/signin': typeof AuthSigninRoute
+  '/auth/signup': typeof AuthSignupRoute
+  '/cars/new': typeof CarsNewRoute
+  '/dealers/new': typeof DealersNewRoute
+  '/employees/new': typeof EmployeesNewRoute
+  '/exchanges/new': typeof ExchangesNewRoute
+  '/expenses/new': typeof ExpensesNewRoute
+  '/cars/': typeof CarsIndexRoute
+  '/dealers/': typeof DealersIndexRoute
+  '/employees/': typeof EmployeesIndexRoute
+  '/exchanges/': typeof ExchangesIndexRoute
+  '/expenses/': typeof ExpensesIndexRoute
+  '/cars/$id/edit': typeof CarsIdEditRoute
+  '/dealers/$id/edit': typeof DealersIdEditRoute
+  '/employees/$id/edit': typeof EmployeesIdEditRoute
+  '/exchanges/$id/edit': typeof ExchangesIdEditRoute
+  '/expenses/$id/edit': typeof ExpensesIdEditRoute
+  '/cars/$id/': typeof CarsIdIndexRoute
+  '/dealers/$id/': typeof DealersIdIndexRoute
+  '/employees/$id/': typeof EmployeesIdIndexRoute
+  '/exchanges/$id/': typeof ExchangesIdIndexRoute
+  '/expenses/$id/': typeof ExpensesIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/billing': typeof BillingRoute
+  '/salaries': typeof SalariesRoute
+  '/settings': typeof SettingsRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/signin': typeof AuthSigninRoute
+  '/auth/signup': typeof AuthSignupRoute
+  '/cars/new': typeof CarsNewRoute
+  '/dealers/new': typeof DealersNewRoute
+  '/employees/new': typeof EmployeesNewRoute
+  '/exchanges/new': typeof ExchangesNewRoute
+  '/expenses/new': typeof ExpensesNewRoute
+  '/cars': typeof CarsIndexRoute
+  '/dealers': typeof DealersIndexRoute
+  '/employees': typeof EmployeesIndexRoute
+  '/exchanges': typeof ExchangesIndexRoute
+  '/expenses': typeof ExpensesIndexRoute
+  '/cars/$id/edit': typeof CarsIdEditRoute
+  '/dealers/$id/edit': typeof DealersIdEditRoute
+  '/employees/$id/edit': typeof EmployeesIdEditRoute
+  '/exchanges/$id/edit': typeof ExchangesIdEditRoute
+  '/expenses/$id/edit': typeof ExpensesIdEditRoute
+  '/cars/$id': typeof CarsIdIndexRoute
+  '/dealers/$id': typeof DealersIdIndexRoute
+  '/employees/$id': typeof EmployeesIdIndexRoute
+  '/exchanges/$id': typeof ExchangesIdIndexRoute
+  '/expenses/$id': typeof ExpensesIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/billing': typeof BillingRoute
+  '/salaries': typeof SalariesRoute
+  '/settings': typeof SettingsRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/signin': typeof AuthSigninRoute
+  '/auth/signup': typeof AuthSignupRoute
+  '/cars/new': typeof CarsNewRoute
+  '/dealers/new': typeof DealersNewRoute
+  '/employees/new': typeof EmployeesNewRoute
+  '/exchanges/new': typeof ExchangesNewRoute
+  '/expenses/new': typeof ExpensesNewRoute
+  '/cars/': typeof CarsIndexRoute
+  '/dealers/': typeof DealersIndexRoute
+  '/employees/': typeof EmployeesIndexRoute
+  '/exchanges/': typeof ExchangesIndexRoute
+  '/expenses/': typeof ExpensesIndexRoute
+  '/cars/$id/edit': typeof CarsIdEditRoute
+  '/dealers/$id/edit': typeof DealersIdEditRoute
+  '/employees/$id/edit': typeof EmployeesIdEditRoute
+  '/exchanges/$id/edit': typeof ExchangesIdEditRoute
+  '/expenses/$id/edit': typeof ExpensesIdEditRoute
+  '/cars/$id/': typeof CarsIdIndexRoute
+  '/dealers/$id/': typeof DealersIdIndexRoute
+  '/employees/$id/': typeof EmployeesIdIndexRoute
+  '/exchanges/$id/': typeof ExchangesIdIndexRoute
+  '/expenses/$id/': typeof ExpensesIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/billing'
+    | '/salaries'
+    | '/settings'
+    | '/auth/forgot-password'
+    | '/auth/signin'
+    | '/auth/signup'
+    | '/cars/new'
+    | '/dealers/new'
+    | '/employees/new'
+    | '/exchanges/new'
+    | '/expenses/new'
+    | '/cars/'
+    | '/dealers/'
+    | '/employees/'
+    | '/exchanges/'
+    | '/expenses/'
+    | '/cars/$id/edit'
+    | '/dealers/$id/edit'
+    | '/employees/$id/edit'
+    | '/exchanges/$id/edit'
+    | '/expenses/$id/edit'
+    | '/cars/$id/'
+    | '/dealers/$id/'
+    | '/employees/$id/'
+    | '/exchanges/$id/'
+    | '/expenses/$id/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/billing'
+    | '/salaries'
+    | '/settings'
+    | '/auth/forgot-password'
+    | '/auth/signin'
+    | '/auth/signup'
+    | '/cars/new'
+    | '/dealers/new'
+    | '/employees/new'
+    | '/exchanges/new'
+    | '/expenses/new'
+    | '/cars'
+    | '/dealers'
+    | '/employees'
+    | '/exchanges'
+    | '/expenses'
+    | '/cars/$id/edit'
+    | '/dealers/$id/edit'
+    | '/employees/$id/edit'
+    | '/exchanges/$id/edit'
+    | '/expenses/$id/edit'
+    | '/cars/$id'
+    | '/dealers/$id'
+    | '/employees/$id'
+    | '/exchanges/$id'
+    | '/expenses/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/billing'
+    | '/salaries'
+    | '/settings'
+    | '/auth/forgot-password'
+    | '/auth/signin'
+    | '/auth/signup'
+    | '/cars/new'
+    | '/dealers/new'
+    | '/employees/new'
+    | '/exchanges/new'
+    | '/expenses/new'
+    | '/cars/'
+    | '/dealers/'
+    | '/employees/'
+    | '/exchanges/'
+    | '/expenses/'
+    | '/cars/$id/edit'
+    | '/dealers/$id/edit'
+    | '/employees/$id/edit'
+    | '/exchanges/$id/edit'
+    | '/expenses/$id/edit'
+    | '/cars/$id/'
+    | '/dealers/$id/'
+    | '/employees/$id/'
+    | '/exchanges/$id/'
+    | '/expenses/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BillingRoute: typeof BillingRoute
+  SalariesRoute: typeof SalariesRoute
+  SettingsRoute: typeof SettingsRoute
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthSigninRoute: typeof AuthSigninRoute
+  AuthSignupRoute: typeof AuthSignupRoute
+  CarsNewRoute: typeof CarsNewRoute
+  DealersNewRoute: typeof DealersNewRoute
+  EmployeesNewRoute: typeof EmployeesNewRoute
+  ExchangesNewRoute: typeof ExchangesNewRoute
+  ExpensesNewRoute: typeof ExpensesNewRoute
+  CarsIndexRoute: typeof CarsIndexRoute
+  DealersIndexRoute: typeof DealersIndexRoute
+  EmployeesIndexRoute: typeof EmployeesIndexRoute
+  ExchangesIndexRoute: typeof ExchangesIndexRoute
+  ExpensesIndexRoute: typeof ExpensesIndexRoute
+  CarsIdEditRoute: typeof CarsIdEditRoute
+  DealersIdEditRoute: typeof DealersIdEditRoute
+  EmployeesIdEditRoute: typeof EmployeesIdEditRoute
+  ExchangesIdEditRoute: typeof ExchangesIdEditRoute
+  ExpensesIdEditRoute: typeof ExpensesIdEditRoute
+  CarsIdIndexRoute: typeof CarsIdIndexRoute
+  DealersIdIndexRoute: typeof DealersIdIndexRoute
+  EmployeesIdIndexRoute: typeof EmployeesIdIndexRoute
+  ExchangesIdIndexRoute: typeof ExchangesIdIndexRoute
+  ExpensesIdIndexRoute: typeof ExpensesIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +390,220 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/billing': {
+      id: '/billing'
+      path: '/billing'
+      fullPath: '/billing'
+      preLoaderRoute: typeof BillingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/salaries': {
+      id: '/salaries'
+      path: '/salaries'
+      fullPath: '/salaries'
+      preLoaderRoute: typeof SalariesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/auth/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/signin': {
+      id: '/auth/signin'
+      path: '/auth/signin'
+      fullPath: '/auth/signin'
+      preLoaderRoute: typeof AuthSigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/signup': {
+      id: '/auth/signup'
+      path: '/auth/signup'
+      fullPath: '/auth/signup'
+      preLoaderRoute: typeof AuthSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cars/': {
+      id: '/cars/'
+      path: '/cars'
+      fullPath: '/cars/'
+      preLoaderRoute: typeof CarsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cars/new': {
+      id: '/cars/new'
+      path: '/cars/new'
+      fullPath: '/cars/new'
+      preLoaderRoute: typeof CarsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dealers/': {
+      id: '/dealers/'
+      path: '/dealers'
+      fullPath: '/dealers/'
+      preLoaderRoute: typeof DealersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dealers/new': {
+      id: '/dealers/new'
+      path: '/dealers/new'
+      fullPath: '/dealers/new'
+      preLoaderRoute: typeof DealersNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employees/': {
+      id: '/employees/'
+      path: '/employees'
+      fullPath: '/employees/'
+      preLoaderRoute: typeof EmployeesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employees/new': {
+      id: '/employees/new'
+      path: '/employees/new'
+      fullPath: '/employees/new'
+      preLoaderRoute: typeof EmployeesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exchanges/': {
+      id: '/exchanges/'
+      path: '/exchanges'
+      fullPath: '/exchanges/'
+      preLoaderRoute: typeof ExchangesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exchanges/new': {
+      id: '/exchanges/new'
+      path: '/exchanges/new'
+      fullPath: '/exchanges/new'
+      preLoaderRoute: typeof ExchangesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/expenses/': {
+      id: '/expenses/'
+      path: '/expenses'
+      fullPath: '/expenses/'
+      preLoaderRoute: typeof ExpensesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/expenses/new': {
+      id: '/expenses/new'
+      path: '/expenses/new'
+      fullPath: '/expenses/new'
+      preLoaderRoute: typeof ExpensesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cars/$id/': {
+      id: '/cars/$id/'
+      path: '/cars/$id'
+      fullPath: '/cars/$id/'
+      preLoaderRoute: typeof CarsIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cars/$id/edit': {
+      id: '/cars/$id/edit'
+      path: '/cars/$id/edit'
+      fullPath: '/cars/$id/edit'
+      preLoaderRoute: typeof CarsIdEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dealers/$id/': {
+      id: '/dealers/$id/'
+      path: '/dealers/$id'
+      fullPath: '/dealers/$id/'
+      preLoaderRoute: typeof DealersIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dealers/$id/edit': {
+      id: '/dealers/$id/edit'
+      path: '/dealers/$id/edit'
+      fullPath: '/dealers/$id/edit'
+      preLoaderRoute: typeof DealersIdEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employees/$id/': {
+      id: '/employees/$id/'
+      path: '/employees/$id'
+      fullPath: '/employees/$id/'
+      preLoaderRoute: typeof EmployeesIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employees/$id/edit': {
+      id: '/employees/$id/edit'
+      path: '/employees/$id/edit'
+      fullPath: '/employees/$id/edit'
+      preLoaderRoute: typeof EmployeesIdEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exchanges/$id/': {
+      id: '/exchanges/$id/'
+      path: '/exchanges/$id'
+      fullPath: '/exchanges/$id/'
+      preLoaderRoute: typeof ExchangesIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exchanges/$id/edit': {
+      id: '/exchanges/$id/edit'
+      path: '/exchanges/$id/edit'
+      fullPath: '/exchanges/$id/edit'
+      preLoaderRoute: typeof ExchangesIdEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/expenses/$id/': {
+      id: '/expenses/$id/'
+      path: '/expenses/$id'
+      fullPath: '/expenses/$id/'
+      preLoaderRoute: typeof ExpensesIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/expenses/$id/edit': {
+      id: '/expenses/$id/edit'
+      path: '/expenses/$id/edit'
+      fullPath: '/expenses/$id/edit'
+      preLoaderRoute: typeof ExpensesIdEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BillingRoute: BillingRoute,
+  SalariesRoute: SalariesRoute,
+  SettingsRoute: SettingsRoute,
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthSigninRoute: AuthSigninRoute,
+  AuthSignupRoute: AuthSignupRoute,
+  CarsNewRoute: CarsNewRoute,
+  DealersNewRoute: DealersNewRoute,
+  EmployeesNewRoute: EmployeesNewRoute,
+  ExchangesNewRoute: ExchangesNewRoute,
+  ExpensesNewRoute: ExpensesNewRoute,
+  CarsIndexRoute: CarsIndexRoute,
+  DealersIndexRoute: DealersIndexRoute,
+  EmployeesIndexRoute: EmployeesIndexRoute,
+  ExchangesIndexRoute: ExchangesIndexRoute,
+  ExpensesIndexRoute: ExpensesIndexRoute,
+  CarsIdEditRoute: CarsIdEditRoute,
+  DealersIdEditRoute: DealersIdEditRoute,
+  EmployeesIdEditRoute: EmployeesIdEditRoute,
+  ExchangesIdEditRoute: ExchangesIdEditRoute,
+  ExpensesIdEditRoute: ExpensesIdEditRoute,
+  CarsIdIndexRoute: CarsIdIndexRoute,
+  DealersIdIndexRoute: DealersIdIndexRoute,
+  EmployeesIdIndexRoute: EmployeesIdIndexRoute,
+  ExchangesIdIndexRoute: ExchangesIdIndexRoute,
+  ExpensesIdIndexRoute: ExpensesIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
