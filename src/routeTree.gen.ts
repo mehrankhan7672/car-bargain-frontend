@@ -12,10 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CarsIndexRouteImport } from './routes/cars.index'
 import { Route as CarsNewRouteImport } from './routes/cars.new'
+import { Route as DealersIndexRouteImport } from './routes/dealers.index'
+import { Route as DealersNewRouteImport } from './routes/dealers.new'
 import { Route as ExchangesIndexRouteImport } from './routes/exchanges.index'
 import { Route as ExchangesNewRouteImport } from './routes/exchanges.new'
 import { Route as CarsIdIndexRouteImport } from './routes/cars.$id.index'
 import { Route as CarsIdEditRouteImport } from './routes/cars.$id.edit'
+import { Route as DealersIdIndexRouteImport } from './routes/dealers.$id.index'
+import { Route as DealersIdEditRouteImport } from './routes/dealers.$id.edit'
 import { Route as ExchangesIdIndexRouteImport } from './routes/exchanges.$id.index'
 import { Route as ExchangesIdEditRouteImport } from './routes/exchanges.$id.edit'
 
@@ -32,6 +36,16 @@ const CarsIndexRoute = CarsIndexRouteImport.update({
 const CarsNewRoute = CarsNewRouteImport.update({
   id: '/cars/new',
   path: '/cars/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealersIndexRoute = DealersIndexRouteImport.update({
+  id: '/dealers/',
+  path: '/dealers/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealersNewRoute = DealersNewRouteImport.update({
+  id: '/dealers/new',
+  path: '/dealers/new',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExchangesIndexRoute = ExchangesIndexRouteImport.update({
@@ -54,6 +68,16 @@ const CarsIdEditRoute = CarsIdEditRouteImport.update({
   path: '/cars/$id/edit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DealersIdIndexRoute = DealersIdIndexRouteImport.update({
+  id: '/dealers/$id/',
+  path: '/dealers/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealersIdEditRoute = DealersIdEditRouteImport.update({
+  id: '/dealers/$id/edit',
+  path: '/dealers/$id/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExchangesIdIndexRoute = ExchangesIdIndexRouteImport.update({
   id: '/exchanges/$id/',
   path: '/exchanges/$id/',
@@ -68,35 +92,47 @@ const ExchangesIdEditRoute = ExchangesIdEditRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cars/new': typeof CarsNewRoute
+  '/dealers/new': typeof DealersNewRoute
   '/exchanges/new': typeof ExchangesNewRoute
   '/cars/': typeof CarsIndexRoute
+  '/dealers/': typeof DealersIndexRoute
   '/exchanges/': typeof ExchangesIndexRoute
   '/cars/$id/edit': typeof CarsIdEditRoute
+  '/dealers/$id/edit': typeof DealersIdEditRoute
   '/exchanges/$id/edit': typeof ExchangesIdEditRoute
   '/cars/$id/': typeof CarsIdIndexRoute
+  '/dealers/$id/': typeof DealersIdIndexRoute
   '/exchanges/$id/': typeof ExchangesIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cars/new': typeof CarsNewRoute
+  '/dealers/new': typeof DealersNewRoute
   '/exchanges/new': typeof ExchangesNewRoute
   '/cars': typeof CarsIndexRoute
+  '/dealers': typeof DealersIndexRoute
   '/exchanges': typeof ExchangesIndexRoute
   '/cars/$id/edit': typeof CarsIdEditRoute
+  '/dealers/$id/edit': typeof DealersIdEditRoute
   '/exchanges/$id/edit': typeof ExchangesIdEditRoute
   '/cars/$id': typeof CarsIdIndexRoute
+  '/dealers/$id': typeof DealersIdIndexRoute
   '/exchanges/$id': typeof ExchangesIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/cars/new': typeof CarsNewRoute
+  '/dealers/new': typeof DealersNewRoute
   '/exchanges/new': typeof ExchangesNewRoute
   '/cars/': typeof CarsIndexRoute
+  '/dealers/': typeof DealersIndexRoute
   '/exchanges/': typeof ExchangesIndexRoute
   '/cars/$id/edit': typeof CarsIdEditRoute
+  '/dealers/$id/edit': typeof DealersIdEditRoute
   '/exchanges/$id/edit': typeof ExchangesIdEditRoute
   '/cars/$id/': typeof CarsIdIndexRoute
+  '/dealers/$id/': typeof DealersIdIndexRoute
   '/exchanges/$id/': typeof ExchangesIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -104,46 +140,62 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/cars/new'
+    | '/dealers/new'
     | '/exchanges/new'
     | '/cars/'
+    | '/dealers/'
     | '/exchanges/'
     | '/cars/$id/edit'
+    | '/dealers/$id/edit'
     | '/exchanges/$id/edit'
     | '/cars/$id/'
+    | '/dealers/$id/'
     | '/exchanges/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/cars/new'
+    | '/dealers/new'
     | '/exchanges/new'
     | '/cars'
+    | '/dealers'
     | '/exchanges'
     | '/cars/$id/edit'
+    | '/dealers/$id/edit'
     | '/exchanges/$id/edit'
     | '/cars/$id'
+    | '/dealers/$id'
     | '/exchanges/$id'
   id:
     | '__root__'
     | '/'
     | '/cars/new'
+    | '/dealers/new'
     | '/exchanges/new'
     | '/cars/'
+    | '/dealers/'
     | '/exchanges/'
     | '/cars/$id/edit'
+    | '/dealers/$id/edit'
     | '/exchanges/$id/edit'
     | '/cars/$id/'
+    | '/dealers/$id/'
     | '/exchanges/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CarsNewRoute: typeof CarsNewRoute
+  DealersNewRoute: typeof DealersNewRoute
   ExchangesNewRoute: typeof ExchangesNewRoute
   CarsIndexRoute: typeof CarsIndexRoute
+  DealersIndexRoute: typeof DealersIndexRoute
   ExchangesIndexRoute: typeof ExchangesIndexRoute
   CarsIdEditRoute: typeof CarsIdEditRoute
+  DealersIdEditRoute: typeof DealersIdEditRoute
   ExchangesIdEditRoute: typeof ExchangesIdEditRoute
   CarsIdIndexRoute: typeof CarsIdIndexRoute
+  DealersIdIndexRoute: typeof DealersIdIndexRoute
   ExchangesIdIndexRoute: typeof ExchangesIdIndexRoute
 }
 
@@ -168,6 +220,20 @@ declare module '@tanstack/react-router' {
       path: '/cars/new'
       fullPath: '/cars/new'
       preLoaderRoute: typeof CarsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dealers/': {
+      id: '/dealers/'
+      path: '/dealers'
+      fullPath: '/dealers/'
+      preLoaderRoute: typeof DealersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dealers/new': {
+      id: '/dealers/new'
+      path: '/dealers/new'
+      fullPath: '/dealers/new'
+      preLoaderRoute: typeof DealersNewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/exchanges/': {
@@ -198,6 +264,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CarsIdEditRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dealers/$id/': {
+      id: '/dealers/$id/'
+      path: '/dealers/$id'
+      fullPath: '/dealers/$id/'
+      preLoaderRoute: typeof DealersIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dealers/$id/edit': {
+      id: '/dealers/$id/edit'
+      path: '/dealers/$id/edit'
+      fullPath: '/dealers/$id/edit'
+      preLoaderRoute: typeof DealersIdEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/exchanges/$id/': {
       id: '/exchanges/$id/'
       path: '/exchanges/$id'
@@ -218,12 +298,16 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CarsNewRoute: CarsNewRoute,
+  DealersNewRoute: DealersNewRoute,
   ExchangesNewRoute: ExchangesNewRoute,
   CarsIndexRoute: CarsIndexRoute,
+  DealersIndexRoute: DealersIndexRoute,
   ExchangesIndexRoute: ExchangesIndexRoute,
   CarsIdEditRoute: CarsIdEditRoute,
+  DealersIdEditRoute: DealersIdEditRoute,
   ExchangesIdEditRoute: ExchangesIdEditRoute,
   CarsIdIndexRoute: CarsIdIndexRoute,
+  DealersIdIndexRoute: DealersIdIndexRoute,
   ExchangesIdIndexRoute: ExchangesIdIndexRoute,
 }
 export const routeTree = rootRouteImport
