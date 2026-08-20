@@ -75,12 +75,38 @@ function Dashboard() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <StatCard label="Total Cars" value={cars.length} icon={Car} hint="In showroom record" accent />
+        <StatCard
+          label="Total Cars"
+          value={cars.length}
+          icon={Car}
+          hint="In showroom record"
+          accent
+        />
         <StatCard label="Cars Sold" value={sold} icon={CheckCircle2} hint="This year" />
-        <StatCard label="Total Exchanges" value={exchanges.length} icon={Repeat2} hint="Deals done" />
-        <StatCard label="Total Expenses" value={formatPKR(totalExpense)} icon={Wallet} hint="All categories" />
-        <StatCard label="Total Employees" value={employees.length} icon={UserCog} hint="Working staff" />
-        <StatCard label="Total Dealers" value={dealers.length} icon={Users} hint="Partner dealers" />
+        <StatCard
+          label="Total Exchanges"
+          value={exchanges.length}
+          icon={Repeat2}
+          hint="Deals done"
+        />
+        <StatCard
+          label="Total Expenses"
+          value={formatPKR(totalExpense)}
+          icon={Wallet}
+          hint="All categories"
+        />
+        <StatCard
+          label="Total Employees"
+          value={employees.length}
+          icon={UserCog}
+          hint="Working staff"
+        />
+        <StatCard
+          label="Total Dealers"
+          value={dealers.length}
+          icon={Users}
+          hint="Partner dealers"
+        />
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
@@ -98,8 +124,19 @@ function Dashboard() {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={monthlySales}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                <XAxis dataKey="month" stroke="var(--muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="var(--muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
+                <XAxis
+                  dataKey="month"
+                  stroke="var(--muted-foreground)"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  stroke="var(--muted-foreground)"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
                 <Tooltip
                   contentStyle={{
                     background: "var(--popover)",
@@ -120,7 +157,14 @@ function Dashboard() {
           <div className="h-60 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={52} outerRadius={82} paddingAngle={4}>
+                <Pie
+                  data={pieData}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={52}
+                  outerRadius={82}
+                  paddingAngle={4}
+                >
                   {pieData.map((_, i) => (
                     <Cell key={i} fill={pieColors[i]} stroke="var(--card)" strokeWidth={2} />
                   ))}
@@ -164,8 +208,19 @@ function Dashboard() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                <XAxis dataKey="month" stroke="var(--muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="var(--muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
+                <XAxis
+                  dataKey="month"
+                  stroke="var(--muted-foreground)"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  stroke="var(--muted-foreground)"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
                 <Tooltip
                   contentStyle={{
                     background: "var(--popover)",
@@ -174,7 +229,13 @@ function Dashboard() {
                     color: "var(--popover-foreground)",
                   }}
                 />
-                <Area type="monotone" dataKey="amount" stroke="var(--gold)" strokeWidth={2.5} fill="url(#expenseFill)" />
+                <Area
+                  type="monotone"
+                  dataKey="amount"
+                  stroke="var(--gold)"
+                  strokeWidth={2.5}
+                  fill="url(#expenseFill)"
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>

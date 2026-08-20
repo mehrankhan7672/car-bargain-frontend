@@ -33,7 +33,11 @@ export function PrintableDocument({
         </Button>
         <Button
           className="rounded-xl"
-          onClick={() => toast.success("PDF download started", { description: "Demo only — no file is generated." })}
+          onClick={() =>
+            toast.success("PDF download started", {
+              description: "Demo only — no file is generated.",
+            })
+          }
         >
           <Download className="h-4 w-4" /> Download PDF
         </Button>
@@ -80,8 +84,12 @@ export function PrintableDocument({
             <table className="w-full text-sm">
               <thead className="bg-secondary/70">
                 <tr>
-                  <th className="px-4 py-2.5 text-left text-xs uppercase tracking-wider">Description</th>
-                  <th className="px-4 py-2.5 text-right text-xs uppercase tracking-wider">Detail</th>
+                  <th className="px-4 py-2.5 text-left text-xs uppercase tracking-wider">
+                    Description
+                  </th>
+                  <th className="px-4 py-2.5 text-right text-xs uppercase tracking-wider">
+                    Detail
+                  </th>
                 </tr>
               </thead>
               <tbody>

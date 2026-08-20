@@ -15,7 +15,10 @@ export const Route = createFileRoute("/billing")({
   head: () => ({
     meta: [
       { title: "Billing — Car Bargain Manager" },
-      { name: "description", content: "Create and print a car sale invoice with business logo and customer details." },
+      {
+        name: "description",
+        content: "Create and print a car sale invoice with business logo and customer details.",
+      },
       { property: "og:title", content: "Billing — Car Bargain Manager" },
       { property: "og:description", content: "Printable invoices for every vehicle sale." },
     ],

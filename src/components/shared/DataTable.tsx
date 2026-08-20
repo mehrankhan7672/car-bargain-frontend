@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode, useEffect } from "react";
 import { Search, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { TableSkeleton } from "./TableSkeleton";
 import { EmptyState } from "./EmptyState";
 
@@ -24,6 +31,15 @@ export type FilterConfig<T> = {
   label: string;
   options: string[];
   match: (row: T, value: string) => boolean;
+  onChange?: (value: string) => void; // For API filtering
+};
+
+export type PaginationProps = {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  itemsPerPage: number;
+  onPageChange: (page: number) => void;
 };
 
 export function DataTable<T extends { id: string }>({
@@ -33,9 +49,12 @@ export function DataTable<T extends { id: string }>({
   searchPlaceholder = "Search...",
   filters = [],
   loading = false,
-  pageSize = 6,
+  pageSize = 10,
   emptyTitle,
   emptyAction,
+  onSearch,
+  pagination,
+  totalCount,
 }: {
   rows: T[];
   columns: Column<T>[];
@@ -46,12 +65,45 @@ export function DataTable<T extends { id: string }>({
   pageSize?: number;
   emptyTitle?: string;
   emptyAction?: ReactNode;
+  onSearch?: (query: string) => void;
+  pagination?: PaginationProps;
+  totalCount?: number;
 }) {
   const [query, setQuery] = useState("");
   const [filterValues, setFilterValues] = useState<Record<string, string>>({});
   const [page, setPage] = useState(1);
 
-  const filtered = useMemo(() => {
+  // Handle search with debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (onSearch) {
+        onSearch(query);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [query, onSearch]);
+
+  // Handle filter changes
+  const handleFilterChange = (filterLabel: string, value: string) => {
+    setFilterValues((prev) => ({ ...prev, [filterLabel]: value }));
+    setPage(1);
+
+    // Find the filter config and call onChange if exists
+    const filter = filters.find((f) => f.label === filterLabel);
+    if (filter?.onChange) {
+      filter.onChange(value);
+    }
+  };
+
+  // Local filtering (if not using API pagination)
+  const filteredRows = useMemo(() => {
+    // If we have pagination from API, use rows directly
+    if (pagination) {
+      return rows;
+    }
+
+    // Otherwise, do local filtering
     return rows.filter((row) => {
       const matchesQuery = searchKeys(row).toLowerCase().includes(query.trim().toLowerCase());
       const matchesFilters = filters.every((f) => {
@@ -60,11 +112,31 @@ export function DataTable<T extends { id: string }>({
       });
       return matchesQuery && matchesFilters;
     });
-  }, [rows, query, filterValues, filters, searchKeys]);
+  }, [rows, query, filterValues, filters, searchKeys, pagination]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const current = Math.min(page, totalPages);
-  const paged = filtered.slice((current - 1) * pageSize, current * pageSize);
+  // Calculate pagination for local filtering
+  const localTotalPages = pagination
+    ? pagination.totalPages
+    : Math.max(1, Math.ceil(filteredRows.length / pageSize));
+
+  const localCurrentPage = pagination ? pagination.currentPage : Math.min(page, localTotalPages);
+
+  // Get current page data
+  const currentData = pagination
+    ? rows
+    : filteredRows.slice((localCurrentPage - 1) * pageSize, localCurrentPage * pageSize);
+
+  // Total count display
+  const displayTotal = pagination ? pagination.totalItems : filteredRows.length;
+
+  // Handler for page change
+  const handlePageChange = (newPage: number) => {
+    if (pagination) {
+      pagination.onPageChange(newPage);
+    } else {
+      setPage(newPage);
+    }
+  };
 
   return (
     <div className="card-soft overflow-hidden">
@@ -75,7 +147,9 @@ export function DataTable<T extends { id: string }>({
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
-              setPage(1);
+              if (!onSearch) {
+                setPage(1);
+              }
             }}
             placeholder={searchPlaceholder}
             className="h-10 rounded-xl pl-9"
@@ -88,10 +162,7 @@ export function DataTable<T extends { id: string }>({
               <Select
                 key={f.label}
                 value={filterValues[f.label] ?? "all"}
-                onValueChange={(v) => {
-                  setFilterValues((prev) => ({ ...prev, [f.label]: v }));
-                  setPage(1);
-                }}
+                onValueChange={(v) => handleFilterChange(f.label, v)}
               >
                 <SelectTrigger className="h-10 w-[150px] rounded-xl">
                   <SelectValue placeholder={f.label} />
@@ -112,7 +183,7 @@ export function DataTable<T extends { id: string }>({
 
       {loading ? (
         <TableSkeleton cols={columns.length} />
-      ) : paged.length === 0 ? (
+      ) : currentData.length === 0 ? (
         <EmptyState title={emptyTitle ?? "No records found"} action={emptyAction} />
       ) : (
         <div className="w-full overflow-x-auto">
@@ -130,7 +201,7 @@ export function DataTable<T extends { id: string }>({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paged.map((row) => (
+              {currentData.map((row) => (
                 <TableRow key={row.id} className="transition-colors hover:bg-accent/40">
                   {columns.map((c) => (
                     <TableCell key={c.key} className={`py-3 ${c.className ?? ""}`}>
@@ -146,27 +217,27 @@ export function DataTable<T extends { id: string }>({
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-3">
         <p className="text-xs text-muted-foreground">
-          Showing {paged.length} of {filtered.length} records
+          Showing {currentData.length} of {displayTotal} records
         </p>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             className="rounded-lg"
-            disabled={current <= 1}
-            onClick={() => setPage(current - 1)}
+            disabled={localCurrentPage <= 1 || loading}
+            onClick={() => handlePageChange(localCurrentPage - 1)}
           >
             <ChevronLeft className="h-4 w-4" /> Previous
           </Button>
           <span className="text-xs font-medium text-muted-foreground">
-            Page {current} / {totalPages}
+            Page {localCurrentPage} / {localTotalPages}
           </span>
           <Button
             variant="outline"
             size="sm"
             className="rounded-lg"
-            disabled={current >= totalPages}
-            onClick={() => setPage(current + 1)}
+            disabled={localCurrentPage >= localTotalPages || loading}
+            onClick={() => handlePageChange(localCurrentPage + 1)}
           >
             Next <ChevronRight className="h-4 w-4" />
           </Button>

@@ -345,14 +345,70 @@ export type Expense = {
 };
 
 export const expenses: Expense[] = [
-  { id: "EXP-01", title: "Engine tuning - Corolla", category: "Repair", amount: 45000, date: "2026-07-02", notes: "Workshop bill paid in cash." },
-  { id: "EXP-02", title: "Showroom electricity bill", category: "Office", amount: 68000, date: "2026-07-05", notes: "Monthly bill." },
-  { id: "EXP-03", title: "Facebook ads", category: "Marketing", amount: 25000, date: "2026-07-08", notes: "Weekly car listing boost." },
-  { id: "EXP-04", title: "Petrol for test drives", category: "Fuel", amount: 18500, date: "2026-07-11", notes: "" },
-  { id: "EXP-05", title: "Denting & painting - Civic", category: "Repair", amount: 92000, date: "2026-07-14", notes: "Front bumper work." },
-  { id: "EXP-06", title: "Staff salaries July", category: "Salary", amount: 480000, date: "2026-07-31", notes: "5 employees." },
-  { id: "EXP-07", title: "Office stationery", category: "Office", amount: 9500, date: "2026-08-01", notes: "" },
-  { id: "EXP-08", title: "Car wash service", category: "Other", amount: 12000, date: "2026-08-02", notes: "Monthly package." },
+  {
+    id: "EXP-01",
+    title: "Engine tuning - Corolla",
+    category: "Repair",
+    amount: 45000,
+    date: "2026-07-02",
+    notes: "Workshop bill paid in cash.",
+  },
+  {
+    id: "EXP-02",
+    title: "Showroom electricity bill",
+    category: "Office",
+    amount: 68000,
+    date: "2026-07-05",
+    notes: "Monthly bill.",
+  },
+  {
+    id: "EXP-03",
+    title: "Facebook ads",
+    category: "Marketing",
+    amount: 25000,
+    date: "2026-07-08",
+    notes: "Weekly car listing boost.",
+  },
+  {
+    id: "EXP-04",
+    title: "Petrol for test drives",
+    category: "Fuel",
+    amount: 18500,
+    date: "2026-07-11",
+    notes: "",
+  },
+  {
+    id: "EXP-05",
+    title: "Denting & painting - Civic",
+    category: "Repair",
+    amount: 92000,
+    date: "2026-07-14",
+    notes: "Front bumper work.",
+  },
+  {
+    id: "EXP-06",
+    title: "Staff salaries July",
+    category: "Salary",
+    amount: 480000,
+    date: "2026-07-31",
+    notes: "5 employees.",
+  },
+  {
+    id: "EXP-07",
+    title: "Office stationery",
+    category: "Office",
+    amount: 9500,
+    date: "2026-08-01",
+    notes: "",
+  },
+  {
+    id: "EXP-08",
+    title: "Car wash service",
+    category: "Other",
+    amount: 12000,
+    date: "2026-08-02",
+    notes: "Monthly package.",
+  },
 ];
 
 export type Employee = {
@@ -365,11 +421,46 @@ export type Employee = {
 };
 
 export const employees: Employee[] = [
-  { id: "EMP-01", name: "Ahmed Raza", role: "Manager", phone: "+92 300 1112223", joiningDate: "2023-01-15", salary: 120000 },
-  { id: "EMP-02", name: "Fahad Iqbal", role: "Salesman", phone: "+92 321 3334445", joiningDate: "2024-03-01", salary: 65000 },
-  { id: "EMP-03", name: "Sana Malik", role: "Accountant", phone: "+92 333 5556667", joiningDate: "2023-09-10", salary: 85000 },
-  { id: "EMP-04", name: "Zubair Ali", role: "Driver", phone: "+92 345 7778889", joiningDate: "2025-02-20", salary: 45000 },
-  { id: "EMP-05", name: "Naveed Akhtar", role: "Mechanic", phone: "+92 312 9990001", joiningDate: "2022-11-05", salary: 70000 },
+  {
+    id: "EMP-01",
+    name: "Ahmed Raza",
+    role: "Manager",
+    phone: "+92 300 1112223",
+    joiningDate: "2023-01-15",
+    salary: 120000,
+  },
+  {
+    id: "EMP-02",
+    name: "Fahad Iqbal",
+    role: "Salesman",
+    phone: "+92 321 3334445",
+    joiningDate: "2024-03-01",
+    salary: 65000,
+  },
+  {
+    id: "EMP-03",
+    name: "Sana Malik",
+    role: "Accountant",
+    phone: "+92 333 5556667",
+    joiningDate: "2023-09-10",
+    salary: 85000,
+  },
+  {
+    id: "EMP-04",
+    name: "Zubair Ali",
+    role: "Driver",
+    phone: "+92 345 7778889",
+    joiningDate: "2025-02-20",
+    salary: 45000,
+  },
+  {
+    id: "EMP-05",
+    name: "Naveed Akhtar",
+    role: "Mechanic",
+    phone: "+92 312 9990001",
+    joiningDate: "2022-11-05",
+    salary: 70000,
+  },
 ];
 
 export type Salary = {
@@ -382,12 +473,54 @@ export type Salary = {
 };
 
 export const salaries: Salary[] = [
-  { id: "SAL-101", employee: "Ahmed Raza", month: "July 2026", amount: 120000, paidOn: "2026-07-31", method: "Bank Transfer" },
-  { id: "SAL-102", employee: "Fahad Iqbal", month: "July 2026", amount: 65000, paidOn: "2026-07-31", method: "Cash" },
-  { id: "SAL-103", employee: "Sana Malik", month: "July 2026", amount: 85000, paidOn: "2026-07-31", method: "Bank Transfer" },
-  { id: "SAL-104", employee: "Zubair Ali", month: "July 2026", amount: 45000, paidOn: "2026-08-01", method: "Cash" },
-  { id: "SAL-105", employee: "Naveed Akhtar", month: "June 2026", amount: 70000, paidOn: "2026-06-30", method: "Cheque" },
-  { id: "SAL-106", employee: "Ahmed Raza", month: "June 2026", amount: 120000, paidOn: "2026-06-30", method: "Bank Transfer" },
+  {
+    id: "SAL-101",
+    employee: "Ahmed Raza",
+    month: "July 2026",
+    amount: 120000,
+    paidOn: "2026-07-31",
+    method: "Bank Transfer",
+  },
+  {
+    id: "SAL-102",
+    employee: "Fahad Iqbal",
+    month: "July 2026",
+    amount: 65000,
+    paidOn: "2026-07-31",
+    method: "Cash",
+  },
+  {
+    id: "SAL-103",
+    employee: "Sana Malik",
+    month: "July 2026",
+    amount: 85000,
+    paidOn: "2026-07-31",
+    method: "Bank Transfer",
+  },
+  {
+    id: "SAL-104",
+    employee: "Zubair Ali",
+    month: "July 2026",
+    amount: 45000,
+    paidOn: "2026-08-01",
+    method: "Cash",
+  },
+  {
+    id: "SAL-105",
+    employee: "Naveed Akhtar",
+    month: "June 2026",
+    amount: 70000,
+    paidOn: "2026-06-30",
+    method: "Cheque",
+  },
+  {
+    id: "SAL-106",
+    employee: "Ahmed Raza",
+    month: "June 2026",
+    amount: 120000,
+    paidOn: "2026-06-30",
+    method: "Bank Transfer",
+  },
 ];
 
 export const monthlySales = [
@@ -409,11 +542,41 @@ export const expenseTrend = [
 ];
 
 export const recentActivity = [
-  { id: 1, text: "Honda Civic Oriel sold to Muhammad Bilal", meta: "PKR 73,80,000", time: "2 hours ago", type: "sale" as const },
-  { id: 2, text: "New exchange started with Kamran Yousaf", meta: "Kia Sportage Alpha", time: "5 hours ago", type: "exchange" as const },
-  { id: 3, text: "Expense added: Denting & painting - Civic", meta: "PKR 92,000", time: "Yesterday", type: "expense" as const },
-  { id: 4, text: "Salary paid to Fahad Iqbal", meta: "July 2026", time: "2 days ago", type: "salary" as const },
-  { id: 5, text: "New car added: MG HS Essence", meta: "PKR 98,00,000", time: "3 days ago", type: "car" as const },
+  {
+    id: 1,
+    text: "Honda Civic Oriel sold to Muhammad Bilal",
+    meta: "PKR 73,80,000",
+    time: "2 hours ago",
+    type: "sale" as const,
+  },
+  {
+    id: 2,
+    text: "New exchange started with Kamran Yousaf",
+    meta: "Kia Sportage Alpha",
+    time: "5 hours ago",
+    type: "exchange" as const,
+  },
+  {
+    id: 3,
+    text: "Expense added: Denting & painting - Civic",
+    meta: "PKR 92,000",
+    time: "Yesterday",
+    type: "expense" as const,
+  },
+  {
+    id: 4,
+    text: "Salary paid to Fahad Iqbal",
+    meta: "July 2026",
+    time: "2 days ago",
+    type: "salary" as const,
+  },
+  {
+    id: 5,
+    text: "New car added: MG HS Essence",
+    meta: "PKR 98,00,000",
+    time: "3 days ago",
+    type: "car" as const,
+  },
 ];
 
 export const formatPKR = (value: number) =>

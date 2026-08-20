@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BillingRouteImport } from './routes/billing'
-import { Route as SalariesRouteImport } from './routes/salaries'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
 import { Route as AuthSigninRouteImport } from './routes/auth.signin'
@@ -26,6 +25,10 @@ import { Route as ExchangesIndexRouteImport } from './routes/exchanges.index'
 import { Route as ExchangesNewRouteImport } from './routes/exchanges.new'
 import { Route as ExpensesIndexRouteImport } from './routes/expenses.index'
 import { Route as ExpensesNewRouteImport } from './routes/expenses.new'
+import { Route as LogsIndexRouteImport } from './routes/logs.index'
+import { Route as SalariesIndexRouteImport } from './routes/salaries.index'
+import { Route as SalesIndexRouteImport } from './routes/sales/index'
+import { Route as SalesInvoiceRouteImport } from './routes/sales/invoice'
 import { Route as CarsIdIndexRouteImport } from './routes/cars.$id.index'
 import { Route as CarsIdEditRouteImport } from './routes/cars.$id.edit'
 import { Route as DealersIdIndexRouteImport } from './routes/dealers.$id.index'
@@ -36,6 +39,7 @@ import { Route as ExchangesIdIndexRouteImport } from './routes/exchanges.$id.ind
 import { Route as ExchangesIdEditRouteImport } from './routes/exchanges.$id.edit'
 import { Route as ExpensesIdIndexRouteImport } from './routes/expenses.$id.index'
 import { Route as ExpensesIdEditRouteImport } from './routes/expenses.$id.edit'
+import { Route as SalariesIdIndexRouteImport } from './routes/salaries.$id.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -45,11 +49,6 @@ const IndexRoute = IndexRouteImport.update({
 const BillingRoute = BillingRouteImport.update({
   id: '/billing',
   path: '/billing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SalariesRoute = SalariesRouteImport.update({
-  id: '/salaries',
-  path: '/salaries',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -122,6 +121,26 @@ const ExpensesNewRoute = ExpensesNewRouteImport.update({
   path: '/expenses/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LogsIndexRoute = LogsIndexRouteImport.update({
+  id: '/logs/',
+  path: '/logs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalariesIndexRoute = SalariesIndexRouteImport.update({
+  id: '/salaries/',
+  path: '/salaries/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalesIndexRoute = SalesIndexRouteImport.update({
+  id: '/sales/',
+  path: '/sales/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalesInvoiceRoute = SalesInvoiceRouteImport.update({
+  id: '/sales/invoice',
+  path: '/sales/invoice',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CarsIdIndexRoute = CarsIdIndexRouteImport.update({
   id: '/cars/$id/',
   path: '/cars/$id/',
@@ -172,11 +191,15 @@ const ExpensesIdEditRoute = ExpensesIdEditRouteImport.update({
   path: '/expenses/$id/edit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SalariesIdIndexRoute = SalariesIdIndexRouteImport.update({
+  id: '/salaries/$id/',
+  path: '/salaries/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/billing': typeof BillingRoute
-  '/salaries': typeof SalariesRoute
   '/settings': typeof SettingsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/signin': typeof AuthSigninRoute
@@ -186,11 +209,15 @@ export interface FileRoutesByFullPath {
   '/employees/new': typeof EmployeesNewRoute
   '/exchanges/new': typeof ExchangesNewRoute
   '/expenses/new': typeof ExpensesNewRoute
+  '/sales/invoice': typeof SalesInvoiceRoute
   '/cars/': typeof CarsIndexRoute
   '/dealers/': typeof DealersIndexRoute
   '/employees/': typeof EmployeesIndexRoute
   '/exchanges/': typeof ExchangesIndexRoute
   '/expenses/': typeof ExpensesIndexRoute
+  '/logs/': typeof LogsIndexRoute
+  '/salaries/': typeof SalariesIndexRoute
+  '/sales/': typeof SalesIndexRoute
   '/cars/$id/edit': typeof CarsIdEditRoute
   '/dealers/$id/edit': typeof DealersIdEditRoute
   '/employees/$id/edit': typeof EmployeesIdEditRoute
@@ -201,11 +228,11 @@ export interface FileRoutesByFullPath {
   '/employees/$id/': typeof EmployeesIdIndexRoute
   '/exchanges/$id/': typeof ExchangesIdIndexRoute
   '/expenses/$id/': typeof ExpensesIdIndexRoute
+  '/salaries/$id/': typeof SalariesIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/billing': typeof BillingRoute
-  '/salaries': typeof SalariesRoute
   '/settings': typeof SettingsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/signin': typeof AuthSigninRoute
@@ -215,11 +242,15 @@ export interface FileRoutesByTo {
   '/employees/new': typeof EmployeesNewRoute
   '/exchanges/new': typeof ExchangesNewRoute
   '/expenses/new': typeof ExpensesNewRoute
+  '/sales/invoice': typeof SalesInvoiceRoute
   '/cars': typeof CarsIndexRoute
   '/dealers': typeof DealersIndexRoute
   '/employees': typeof EmployeesIndexRoute
   '/exchanges': typeof ExchangesIndexRoute
   '/expenses': typeof ExpensesIndexRoute
+  '/logs': typeof LogsIndexRoute
+  '/salaries': typeof SalariesIndexRoute
+  '/sales': typeof SalesIndexRoute
   '/cars/$id/edit': typeof CarsIdEditRoute
   '/dealers/$id/edit': typeof DealersIdEditRoute
   '/employees/$id/edit': typeof EmployeesIdEditRoute
@@ -230,12 +261,12 @@ export interface FileRoutesByTo {
   '/employees/$id': typeof EmployeesIdIndexRoute
   '/exchanges/$id': typeof ExchangesIdIndexRoute
   '/expenses/$id': typeof ExpensesIdIndexRoute
+  '/salaries/$id': typeof SalariesIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/billing': typeof BillingRoute
-  '/salaries': typeof SalariesRoute
   '/settings': typeof SettingsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/signin': typeof AuthSigninRoute
@@ -245,11 +276,15 @@ export interface FileRoutesById {
   '/employees/new': typeof EmployeesNewRoute
   '/exchanges/new': typeof ExchangesNewRoute
   '/expenses/new': typeof ExpensesNewRoute
+  '/sales/invoice': typeof SalesInvoiceRoute
   '/cars/': typeof CarsIndexRoute
   '/dealers/': typeof DealersIndexRoute
   '/employees/': typeof EmployeesIndexRoute
   '/exchanges/': typeof ExchangesIndexRoute
   '/expenses/': typeof ExpensesIndexRoute
+  '/logs/': typeof LogsIndexRoute
+  '/salaries/': typeof SalariesIndexRoute
+  '/sales/': typeof SalesIndexRoute
   '/cars/$id/edit': typeof CarsIdEditRoute
   '/dealers/$id/edit': typeof DealersIdEditRoute
   '/employees/$id/edit': typeof EmployeesIdEditRoute
@@ -260,13 +295,13 @@ export interface FileRoutesById {
   '/employees/$id/': typeof EmployeesIdIndexRoute
   '/exchanges/$id/': typeof ExchangesIdIndexRoute
   '/expenses/$id/': typeof ExpensesIdIndexRoute
+  '/salaries/$id/': typeof SalariesIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/billing'
-    | '/salaries'
     | '/settings'
     | '/auth/forgot-password'
     | '/auth/signin'
@@ -276,11 +311,15 @@ export interface FileRouteTypes {
     | '/employees/new'
     | '/exchanges/new'
     | '/expenses/new'
+    | '/sales/invoice'
     | '/cars/'
     | '/dealers/'
     | '/employees/'
     | '/exchanges/'
     | '/expenses/'
+    | '/logs/'
+    | '/salaries/'
+    | '/sales/'
     | '/cars/$id/edit'
     | '/dealers/$id/edit'
     | '/employees/$id/edit'
@@ -291,11 +330,11 @@ export interface FileRouteTypes {
     | '/employees/$id/'
     | '/exchanges/$id/'
     | '/expenses/$id/'
+    | '/salaries/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/billing'
-    | '/salaries'
     | '/settings'
     | '/auth/forgot-password'
     | '/auth/signin'
@@ -305,11 +344,15 @@ export interface FileRouteTypes {
     | '/employees/new'
     | '/exchanges/new'
     | '/expenses/new'
+    | '/sales/invoice'
     | '/cars'
     | '/dealers'
     | '/employees'
     | '/exchanges'
     | '/expenses'
+    | '/logs'
+    | '/salaries'
+    | '/sales'
     | '/cars/$id/edit'
     | '/dealers/$id/edit'
     | '/employees/$id/edit'
@@ -320,11 +363,11 @@ export interface FileRouteTypes {
     | '/employees/$id'
     | '/exchanges/$id'
     | '/expenses/$id'
+    | '/salaries/$id'
   id:
     | '__root__'
     | '/'
     | '/billing'
-    | '/salaries'
     | '/settings'
     | '/auth/forgot-password'
     | '/auth/signin'
@@ -334,11 +377,15 @@ export interface FileRouteTypes {
     | '/employees/new'
     | '/exchanges/new'
     | '/expenses/new'
+    | '/sales/invoice'
     | '/cars/'
     | '/dealers/'
     | '/employees/'
     | '/exchanges/'
     | '/expenses/'
+    | '/logs/'
+    | '/salaries/'
+    | '/sales/'
     | '/cars/$id/edit'
     | '/dealers/$id/edit'
     | '/employees/$id/edit'
@@ -349,12 +396,12 @@ export interface FileRouteTypes {
     | '/employees/$id/'
     | '/exchanges/$id/'
     | '/expenses/$id/'
+    | '/salaries/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BillingRoute: typeof BillingRoute
-  SalariesRoute: typeof SalariesRoute
   SettingsRoute: typeof SettingsRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthSigninRoute: typeof AuthSigninRoute
@@ -364,11 +411,15 @@ export interface RootRouteChildren {
   EmployeesNewRoute: typeof EmployeesNewRoute
   ExchangesNewRoute: typeof ExchangesNewRoute
   ExpensesNewRoute: typeof ExpensesNewRoute
+  SalesInvoiceRoute: typeof SalesInvoiceRoute
   CarsIndexRoute: typeof CarsIndexRoute
   DealersIndexRoute: typeof DealersIndexRoute
   EmployeesIndexRoute: typeof EmployeesIndexRoute
   ExchangesIndexRoute: typeof ExchangesIndexRoute
   ExpensesIndexRoute: typeof ExpensesIndexRoute
+  LogsIndexRoute: typeof LogsIndexRoute
+  SalariesIndexRoute: typeof SalariesIndexRoute
+  SalesIndexRoute: typeof SalesIndexRoute
   CarsIdEditRoute: typeof CarsIdEditRoute
   DealersIdEditRoute: typeof DealersIdEditRoute
   EmployeesIdEditRoute: typeof EmployeesIdEditRoute
@@ -379,6 +430,7 @@ export interface RootRouteChildren {
   EmployeesIdIndexRoute: typeof EmployeesIdIndexRoute
   ExchangesIdIndexRoute: typeof ExchangesIdIndexRoute
   ExpensesIdIndexRoute: typeof ExpensesIdIndexRoute
+  SalariesIdIndexRoute: typeof SalariesIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -395,13 +447,6 @@ declare module '@tanstack/react-router' {
       path: '/billing'
       fullPath: '/billing'
       preLoaderRoute: typeof BillingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/salaries': {
-      id: '/salaries'
-      path: '/salaries'
-      fullPath: '/salaries'
-      preLoaderRoute: typeof SalariesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -502,6 +547,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExpensesNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/logs/': {
+      id: '/logs/'
+      path: '/logs'
+      fullPath: '/logs/'
+      preLoaderRoute: typeof LogsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/salaries/': {
+      id: '/salaries/'
+      path: '/salaries'
+      fullPath: '/salaries/'
+      preLoaderRoute: typeof SalariesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sales/': {
+      id: '/sales/'
+      path: '/sales'
+      fullPath: '/sales/'
+      preLoaderRoute: typeof SalesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sales/invoice': {
+      id: '/sales/invoice'
+      path: '/sales/invoice'
+      fullPath: '/sales/invoice'
+      preLoaderRoute: typeof SalesInvoiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cars/$id/': {
       id: '/cars/$id/'
       path: '/cars/$id'
@@ -572,13 +645,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExpensesIdEditRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/salaries/$id/': {
+      id: '/salaries/$id/'
+      path: '/salaries/$id'
+      fullPath: '/salaries/$id/'
+      preLoaderRoute: typeof SalariesIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BillingRoute: BillingRoute,
-  SalariesRoute: SalariesRoute,
   SettingsRoute: SettingsRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthSigninRoute: AuthSigninRoute,
@@ -588,11 +667,15 @@ const rootRouteChildren: RootRouteChildren = {
   EmployeesNewRoute: EmployeesNewRoute,
   ExchangesNewRoute: ExchangesNewRoute,
   ExpensesNewRoute: ExpensesNewRoute,
+  SalesInvoiceRoute: SalesInvoiceRoute,
   CarsIndexRoute: CarsIndexRoute,
   DealersIndexRoute: DealersIndexRoute,
   EmployeesIndexRoute: EmployeesIndexRoute,
   ExchangesIndexRoute: ExchangesIndexRoute,
   ExpensesIndexRoute: ExpensesIndexRoute,
+  LogsIndexRoute: LogsIndexRoute,
+  SalariesIndexRoute: SalariesIndexRoute,
+  SalesIndexRoute: SalesIndexRoute,
   CarsIdEditRoute: CarsIdEditRoute,
   DealersIdEditRoute: DealersIdEditRoute,
   EmployeesIdEditRoute: EmployeesIdEditRoute,
@@ -603,7 +686,18 @@ const rootRouteChildren: RootRouteChildren = {
   EmployeesIdIndexRoute: EmployeesIdIndexRoute,
   ExchangesIdIndexRoute: ExchangesIdIndexRoute,
   ExpensesIdIndexRoute: ExpensesIdIndexRoute,
+  SalariesIdIndexRoute: SalariesIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

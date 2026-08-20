@@ -1,15 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { EntityForm } from "@/components/shared/EntityForm";
-import { exchangeFields } from "@/data/field-configs";
+import { ExchangeForm } from "@/components/shared/ExchangeForm";
 
 export const Route = createFileRoute("/exchanges/new")({
   head: () => ({
     meta: [
       { title: "Add Exchange — Car Bargain Manager" },
-      { name: "description", content: "Create a new car exchange deal with customer, dealers and cash adjustment." },
+      {
+        name: "description",
+        content:
+          "Create a new car exchange deal: select a showroom vehicle and a customer vehicle, and let the system calculate the settlement.",
+      },
       { property: "og:title", content: "Add Exchange — Car Bargain Manager" },
-      { property: "og:description", content: "Record a vehicle exchange between customer and dealers." },
+      {
+        property: "og:description",
+        content: "Record a vehicle exchange between the showroom and a customer.",
+      },
     ],
   }),
   component: AddExchange,
@@ -18,27 +24,11 @@ export const Route = createFileRoute("/exchanges/new")({
 function AddExchange() {
   return (
     <div className="mx-auto w-full max-w-4xl">
-      <PageHeader title="Add Exchange" subtitle="Enter customer, vehicle and dealer details" />
-      <EntityForm
-        fields={exchangeFields}
-        backTo="/exchanges"
-        submitLabel="Save Exchange"
-        successMessage="Exchange added"
-        defaultValues={{
-          customerName: "",
-          cnic: "",
-          phone: "",
-          address: "",
-          customerVehicle: "",
-          newVehicle: "",
-          dealer1: "",
-          dealer2: "",
-          cashAdjustment: "",
-          finalAmount: "",
-          date: "",
-          status: "Pending",
-        }}
+      <PageHeader
+        title="Add Exchange"
+        subtitle="Select showroom & customer vehicles — the settlement is calculated automatically"
       />
+      <ExchangeForm mode="new" />
     </div>
   );
 }

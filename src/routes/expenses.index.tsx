@@ -14,9 +14,15 @@ export const Route = createFileRoute("/expenses/")({
   head: () => ({
     meta: [
       { title: "Expenses — Car Bargain Manager" },
-      { name: "description", content: "Track showroom expenses by category with totals and monthly summary." },
+      {
+        name: "description",
+        content: "Track showroom expenses by category with totals and monthly summary.",
+      },
       { property: "og:title", content: "Expenses — Car Bargain Manager" },
-      { property: "og:description", content: "Repair, fuel, office and marketing expense tracker." },
+      {
+        property: "og:description",
+        content: "Repair, fuel, office and marketing expense tracker.",
+      },
     ],
   }),
   component: ExpenseList,
@@ -27,9 +33,7 @@ function ExpenseList() {
   const [rows, setRows] = useState<Expense[]>(seed);
 
   const total = rows.reduce((s, e) => s + e.amount, 0);
-  const biggest = rows.length
-    ? rows.reduce((m, e) => (e.amount > m.amount ? e : m))
-    : undefined;
+  const biggest = rows.length ? rows.reduce((m, e) => (e.amount > m.amount ? e : m)) : undefined;
 
   const remove = (e: Expense) => {
     setRows((prev) => prev.filter((x) => x.id !== e.id));
@@ -51,10 +55,16 @@ function ExpenseList() {
       key: "category",
       header: "Category",
       cell: (e) => (
-        <span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium">{e.category}</span>
+        <span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium">
+          {e.category}
+        </span>
       ),
     },
-    { key: "amount", header: "Amount", cell: (e) => <span className="font-semibold">{formatPKR(e.amount)}</span> },
+    {
+      key: "amount",
+      header: "Amount",
+      cell: (e) => <span className="font-semibold">{formatPKR(e.amount)}</span>,
+    },
     { key: "date", header: "Date", cell: (e) => e.date },
     {
       key: "actions",
@@ -62,18 +72,35 @@ function ExpenseList() {
       className: "text-right",
       cell: (e) => (
         <div className="flex justify-end gap-1">
-          <Button asChild size="icon" variant="ghost" className="rounded-lg" aria-label="View expense">
+          <Button
+            asChild
+            size="icon"
+            variant="ghost"
+            className="rounded-lg"
+            aria-label="View expense"
+          >
             <Link to="/expenses/$id" params={{ id: e.id }}>
               <Eye className="h-4 w-4" />
             </Link>
           </Button>
-          <Button asChild size="icon" variant="ghost" className="rounded-lg" aria-label="Edit expense">
+          <Button
+            asChild
+            size="icon"
+            variant="ghost"
+            className="rounded-lg"
+            aria-label="Edit expense"
+          >
             <Link to="/expenses/$id/edit" params={{ id: e.id }}>
               <Pencil className="h-4 w-4" />
             </Link>
           </Button>
           <ConfirmDelete itemName={e.title} onConfirm={() => remove(e)}>
-            <Button size="icon" variant="ghost" className="rounded-lg text-destructive" aria-label="Delete expense">
+            <Button
+              size="icon"
+              variant="ghost"
+              className="rounded-lg text-destructive"
+              aria-label="Delete expense"
+            >
               <Trash2 className="h-4 w-4" />
             </Button>
           </ConfirmDelete>

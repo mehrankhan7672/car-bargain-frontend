@@ -5,8 +5,10 @@ import {
   createRootRouteWithContext,
   useRouter,
   useRouterState,
+  useNavigate,
   HeadContent,
   Scripts,
+  redirect,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
@@ -14,6 +16,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AppShell } from "@/components/layout/AppShell";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { AuthProvider, useAuth, type AuthContextType } from "@/contexts/AuthContext";
 
 function NotFoundComponent() {
   return (
@@ -75,7 +78,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+  auth: AuthContextType;
+}>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -100,7 +106,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.jpg", type: "image/x-icon" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -131,14 +137,73 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const isAuth = pathname.startsWith("/auth");
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      {isAuth ? <Outlet /> : <AppShell><Outlet /></AppShell>}
-      <Toaster position="top-right" richColors />
-    </QueryClientProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <RouteGuard />
+        <Toaster position="top-right" richColors />
+      </QueryClientProvider>
+    </AuthProvider>
+  );
+}
+
+/**
+ * Single place that gates every page in the app.
+ * - Unauthenticated user on a non-/auth page -> redirected to /auth/signin, nothing renders.
+ * - Authenticated user on a /auth page -> redirected to /, nothing renders.
+ * - While we haven't checked localStorage yet (hydrated === false) -> show a
+ *   blank loading screen instead of any real page, so nothing protected is
+ *   ever shown to someone who isn't authorized.
+ */
+function RouteGuard() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isAuthRoute = pathname.startsWith("/auth");
+  const { isAuthenticated, hydrated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!hydrated) return;
+
+    if (!isAuthenticated && !isAuthRoute) {
+      navigate({ to: "/auth/signin", replace: true });
+      return;
+    }
+
+    if (isAuthenticated && isAuthRoute) {
+      navigate({ to: "/", replace: true });
+    }
+  }, [hydrated, isAuthenticated, isAuthRoute, navigate]);
+
+  // Still checking localStorage — don't show anything yet.
+  if (!hydrated) {
+    return <FullPageLoader />;
+  }
+
+  // Not authorized and not on an auth page — a redirect was just triggered
+  // above; render nothing while it happens so no protected page ever flashes.
+  if (!isAuthenticated && !isAuthRoute) {
+    return <FullPageLoader />;
+  }
+
+  // Logged in but sitting on an auth page — same idea, redirect is in flight.
+  if (isAuthenticated && isAuthRoute) {
+    return <FullPageLoader />;
+  }
+
+  return isAuthRoute ? (
+    <Outlet />
+  ) : (
+    <AppShell>
+      <Outlet />
+    </AppShell>
+  );
+}
+
+function FullPageLoader() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-foreground" />
+    </div>
   );
 }

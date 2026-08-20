@@ -2,7 +2,7 @@ import { createFileRoute, useParams } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { EntityForm } from "@/components/shared/EntityForm";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { expenseFields } from "@/data/field-configs";
+import { expenseFields, expenseSteps } from "@/data/field-configs";
 import { expenses } from "@/data/dummy";
 
 export const Route = createFileRoute("/expenses/$id/edit")({
@@ -27,6 +27,8 @@ function EditExpense() {
       <PageHeader title="Edit Expense" subtitle={exp.title} />
       <EntityForm
         fields={expenseFields}
+        steps={expenseSteps}
+        entityLabel="Expense"
         backTo="/expenses"
         submitLabel="Update Expense"
         successMessage="Expense updated"

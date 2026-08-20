@@ -14,7 +14,10 @@ export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
       { title: "Settings — Car Bargain Manager" },
-      { name: "description", content: "Update business information, logo, contact details, password and theme." },
+      {
+        name: "description",
+        content: "Update business information, logo, contact details, password and theme.",
+      },
       { property: "og:title", content: "Settings — Car Bargain Manager" },
       { property: "og:description", content: "Business profile and app preferences." },
     ],
@@ -24,7 +27,8 @@ export const Route = createFileRoute("/settings")({
 
 function Settings() {
   const { dark, setDark } = useTheme();
-  const save = () => toast.success("Settings saved", { description: "Demo mode — nothing is stored." });
+  const save = () =>
+    toast.success("Settings saved", { description: "Demo mode — nothing is stored." });
 
   return (
     <div className="mx-auto w-full max-w-4xl">
