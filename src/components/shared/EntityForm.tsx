@@ -266,7 +266,7 @@ export function buildSchema(fields: FieldConfig[]) {
         shape[field.name] = optionalNumber("Money amount", 0, "Money amount cannot be negative");
         break;
 
-      // --- Added validation for amount and category ---
+      // --- NEW: validation for expense "amount" and "category" ---
       case "amount":
         shape[field.name] = requiredNumber("Amount", 0, "Amount cannot be negative");
         break;
@@ -633,7 +633,7 @@ interface EntityFormProps<T extends FieldValues> {
 
   isSubmitting?: boolean;
 
-  // Opt out of the built-in Review step. Defaults to true so the existing
+  // NEW: Opt out of the built-in Review step. Defaults to true so the existing
   // Car wizard (which relies on it) is completely unaffected.
   enableReview?: boolean;
 }
@@ -740,7 +740,7 @@ export function EntityForm<T extends FieldValues>({
   entityLabel = "Car",
   onSubmit: onSubmitProp,
   isSubmitting: isSubmittingProp,
-  enableReview = true, // default to true – Car wizard unaffected
+  enableReview = true, // default to true – Car wizard unchanged
 }: EntityFormProps<T>) {
   const navigate = useNavigate();
 
@@ -1011,7 +1011,7 @@ export function EntityForm<T extends FieldValues>({
       return;
     }
 
-    /* Default create — Cars only. Any other entity MUST pass its own
+    /* NEW: Default create — Cars only. Any other entity MUST pass its own
        onSubmit prop; silently falling through to carService.create() with
        non-car data was a real bug. */
 
@@ -1891,9 +1891,7 @@ export function EntityForm<T extends FieldValues>({
 
   const canSubmit = isValid;
 
-  // Review is opt-in now. When enableReview is false, the last step just
-  // renders its fields + a Submit button like every other step — no
-  // separate summary page.
+  // NEW: Review is opt-in. Only shows when enableReview is true AND we're on the last step.
   const showReview = enableReview && currentStep === totalSteps && totalSteps > 1;
 
   /* ==========================================================
