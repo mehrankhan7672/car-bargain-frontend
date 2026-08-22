@@ -690,7 +690,7 @@ function ViewExchange() {
             <Button
               onClick={handleRecordPayment}
               disabled={recording || paymentAmount <= 0 || paymentAmount > due || !paymentDate}
-              className="bg-gold-600 hover:bg-gold-700"
+              className="bg-black hover:bg-black/90 text-white"
             >
               {recording ? "Recording..." : "Record Payment"}
             </Button>
