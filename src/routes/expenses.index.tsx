@@ -1,182 +1,152 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, Pencil, Trash2, Eye } from "lucide-react";
+import { Plus, Eye, Pencil, Trash2, Wallet, Receipt, TrendingDown } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { EmptyState } from "@/components/shared/EmptyState";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { expenseService } from "@/services/expenseService";
-import { formatPKR } from "@/data/dummy";
+import { StatCard } from "@/components/shared/StatCard";
+import { DataTable, type Column } from "@/components/shared/DataTable";
+import { ConfirmDelete } from "@/components/shared/ConfirmDelete";
+import { useFakeLoading } from "@/hooks/use-fake-loading";
+import { expenses as seed, formatPKR, type Expense } from "@/data/dummy";
 
 export const Route = createFileRoute("/expenses/")({
   head: () => ({
     meta: [
       { title: "Expenses — Car Bargain Manager" },
-      { name: "description", content: "Manage all showroom expenses." },
+      {
+        name: "description",
+        content: "Track showroom expenses by category with totals and monthly summary.",
+      },
+      { property: "og:title", content: "Expenses — Car Bargain Manager" },
+      {
+        property: "og:description",
+        content: "Repair, fuel, office and marketing expense tracker.",
+      },
     ],
   }),
-  component: ExpensesList,
+  component: ExpenseList,
 });
 
-function ExpensesList() {
-  const [expenses, setExpenses] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+function ExpenseList() {
+  const loading = useFakeLoading();
+  const [rows, setRows] = useState<Expense[]>(seed);
 
-  const fetchExpenses = async () => {
-    try {
-      const response = await expenseService.getAll();
-      // ✅ Extract the array from the response
-      const expenseArray = response?.data || [];
-      setExpenses(Array.isArray(expenseArray) ? expenseArray : []);
-    } catch (err: any) {
-      toast.error("Failed to load expenses", { description: err.message });
-    } finally {
-      setLoading(false);
-    }
+  const total = rows.reduce((s, e) => s + e.amount, 0);
+  const biggest = rows.length ? rows.reduce((m, e) => (e.amount > m.amount ? e : m)) : undefined;
+
+  const remove = (e: Expense) => {
+    setRows((prev) => prev.filter((x) => x.id !== e.id));
+    toast.success("Expense deleted", { description: `${e.title} removed from the list.` });
   };
 
-  useEffect(() => {
-    fetchExpenses();
-  }, []);
-
-  const handleDelete = async () => {
-    if (!deleteId) return;
-    try {
-      await expenseService.delete(deleteId);
-      toast.success("Expense deleted successfully");
-      setExpenses((prev) => prev.filter((e) => e._id !== deleteId));
-    } catch (err: any) {
-      toast.error("Failed to delete expense", { description: err.message });
-    } finally {
-      setDeleteId(null);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex h-48 items-center justify-center">
-        <p className="text-muted-foreground">Loading expenses...</p>
-      </div>
-    );
-  }
+  const columns: Column<Expense>[] = [
+    {
+      key: "title",
+      header: "Expense Title",
+      cell: (e) => (
+        <div className="min-w-0">
+          <p className="truncate font-semibold">{e.title}</p>
+          <p className="truncate text-xs text-muted-foreground">{e.notes || "No note"}</p>
+        </div>
+      ),
+    },
+    {
+      key: "category",
+      header: "Category",
+      cell: (e) => (
+        <span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium">
+          {e.category}
+        </span>
+      ),
+    },
+    {
+      key: "amount",
+      header: "Amount",
+      cell: (e) => <span className="font-semibold">{formatPKR(e.amount)}</span>,
+    },
+    { key: "date", header: "Date", cell: (e) => e.date },
+    {
+      key: "actions",
+      header: "Actions",
+      className: "text-right",
+      cell: (e) => (
+        <div className="flex justify-end gap-1">
+          <Button
+            asChild
+            size="icon"
+            variant="ghost"
+            className="rounded-lg"
+            aria-label="View expense"
+          >
+            <Link to="/expenses/$id" params={{ id: e.id }}>
+              <Eye className="h-4 w-4" />
+            </Link>
+          </Button>
+          <Button
+            asChild
+            size="icon"
+            variant="ghost"
+            className="rounded-lg"
+            aria-label="Edit expense"
+          >
+            <Link to="/expenses/$id/edit" params={{ id: e.id }}>
+              <Pencil className="h-4 w-4" />
+            </Link>
+          </Button>
+          <ConfirmDelete itemName={e.title} onConfirm={() => remove(e)}>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="rounded-lg text-destructive"
+              aria-label="Delete expense"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </ConfirmDelete>
+        </div>
+      ),
+    },
+  ];
 
   return (
-    <div className="mx-auto w-full max-w-5xl">
+    <div className="mx-auto w-full max-w-7xl">
       <PageHeader
         title="Expenses"
-        subtitle="Track all showroom costs"
+        subtitle="Every rupee spent on the showroom"
         actions={
           <Button asChild className="rounded-xl">
             <Link to="/expenses/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Expense
+              <Plus className="h-4 w-4" /> Add Expense
             </Link>
           </Button>
         }
       />
-
-      {expenses.length === 0 ? (
-        <EmptyState title="No expenses recorded yet" />
-      ) : (
-        <div className="rounded-xl border bg-card">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {expenses.map((exp) => (
-                <TableRow key={exp._id}>
-                  <TableCell className="font-medium">{exp.title}</TableCell>
-                  <TableCell>{exp.category}</TableCell>
-                  <TableCell className="text-right">{formatPKR(exp.amount)}</TableCell>
-                  <TableCell>{new Date(exp.date).toLocaleDateString()}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        asChild
-                        className="h-8 w-8"
-                      >
-                        <Link to="/expenses/$id" params={{ id: exp._id }}>
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        asChild
-                        className="h-8 w-8"
-                      >
-                        <Link to="/expenses/$id/edit" params={{ id: exp._id }}>
-                          <Pencil className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                            onClick={() => setDeleteId(exp._id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Expense</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete "{exp.title}"? This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel onClick={() => setDeleteId(null)}>
-                              Cancel
-                            </AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={handleDelete}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+      <div className="mb-6 grid gap-4 sm:grid-cols-3">
+        <StatCard label="Total Expenses" value={formatPKR(total)} icon={Wallet} accent />
+        <StatCard label="Total Entries" value={rows.length} icon={Receipt} hint="All categories" />
+        <StatCard
+          label="Biggest Expense"
+          value={biggest ? formatPKR(biggest.amount) : formatPKR(0)}
+          icon={TrendingDown}
+          hint={biggest ? biggest.title : "No expense yet"}
+        />
+      </div>
+      <DataTable
+        rows={rows}
+        columns={columns}
+        loading={loading}
+        searchPlaceholder="Search by title or note..."
+        searchKeys={(e) => `${e.title} ${e.category} ${e.notes} ${e.date}`}
+        filters={[
+          {
+            label: "Category",
+            options: ["Repair", "Fuel", "Office", "Salary", "Marketing", "Other"],
+            match: (e, v) => e.category === v,
+          },
+        ]}
+        emptyTitle="No expense found"
+      />
     </div>
   );
 }
