@@ -1,4 +1,4 @@
-// src/routes/exchanges/$id/index.tsx (updated)
+// src/routes/exchanges/$id/index.tsx (updated with visible Print button)
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-router";
 import {
@@ -140,7 +140,7 @@ function VehicleSummary({
 
 function ViewExchange() {
   const { id } = useParams({ from: "/exchanges/$id/" });
-  const navigate = useNavigate(); // 👈 added for external invoice route
+  const navigate = useNavigate();
   const [ex, setEx] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
@@ -257,6 +257,21 @@ function ViewExchange() {
         subtitle={`${customerOwner.name || ""} · ${dateStr}`}
         actions={
           <>
+            {/* 👇 NEW: "Print Receipt (Image)" button - now first, solid amber */}
+            <Button
+              variant="default"
+              className="rounded-xl bg-amber-600 hover:bg-amber-700 text-white"
+              onClick={() => {
+                navigate({
+                  to: "/exchanges/invoice",
+                  state: { exchange: ex },
+                });
+              }}
+            >
+              <Printer className="h-4 w-4 mr-2" />
+              Print Receipt (Image)
+            </Button>
+
             {canRecord && (
               <Button
                 variant="default"
@@ -266,21 +281,6 @@ function ViewExchange() {
                 <DollarSign className="h-4 w-4 mr-2" /> Record Payment
               </Button>
             )}
-
-            {/* 👇 NEW: Print Image Receipt button */}
-            <Button
-              variant="outline"
-              className="rounded-xl"
-              onClick={() => {
-                navigate({
-                  to: "/exchanges/invoice",
-                  state: { exchange: ex },
-                });
-              }}
-            >
-              <Printer className="h-4 w-4 mr-2" />
-              Print (Image Receipt)
-            </Button>
 
             <Button asChild variant="outline" className="rounded-xl">
               <Link to="/exchanges">
