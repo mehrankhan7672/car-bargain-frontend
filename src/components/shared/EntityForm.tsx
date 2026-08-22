@@ -266,6 +266,19 @@ export function buildSchema(fields: FieldConfig[]) {
         shape[field.name] = optionalNumber("Money amount", 0, "Money amount cannot be negative");
         break;
 
+      // --- Added validation for amount and category ---
+      case "amount":
+        shape[field.name] = requiredNumber("Amount", 0, "Amount cannot be negative");
+        break;
+
+      case "category":
+        shape[field.name] = enumString(
+          "Category",
+          ["Repair", "Fuel", "Office", "Salary", "Marketing", "Other"],
+          true,
+        );
+        break;
+
       case "userName":
         shape[field.name] = requiredString("Full name");
         break;
@@ -619,6 +632,10 @@ interface EntityFormProps<T extends FieldValues> {
   onSubmit?: (data: T) => Promise<void> | void;
 
   isSubmitting?: boolean;
+
+  // Opt out of the built-in Review step. Defaults to true so the existing
+  // Car wizard (which relies on it) is completely unaffected.
+  enableReview?: boolean;
 }
 
 /* ============================================================
@@ -723,6 +740,7 @@ export function EntityForm<T extends FieldValues>({
   entityLabel = "Car",
   onSubmit: onSubmitProp,
   isSubmitting: isSubmittingProp,
+  enableReview = true, // default to true – Car wizard unaffected
 }: EntityFormProps<T>) {
   const navigate = useNavigate();
 
@@ -993,7 +1011,22 @@ export function EntityForm<T extends FieldValues>({
       return;
     }
 
-    /* Default create */
+    /* Default create — Cars only. Any other entity MUST pass its own
+       onSubmit prop; silently falling through to carService.create() with
+       non-car data was a real bug. */
+
+    if (entityLabel !== "Car") {
+      console.error(
+        `EntityForm: no onSubmit handler was provided for entityLabel="${entityLabel}". ` +
+          `Pass an explicit onSubmit prop — the built-in default submit only knows how to create Cars.`,
+      );
+
+      toast.error("This form isn't fully wired up yet", {
+        description: `No submit handler was provided for ${entityLabel}.`,
+      });
+
+      return;
+    }
 
     setInternalSubmitting(true);
 
@@ -1858,7 +1891,10 @@ export function EntityForm<T extends FieldValues>({
 
   const canSubmit = isValid;
 
-  const showReview = currentStep === totalSteps && totalSteps > 1;
+  // Review is opt-in now. When enableReview is false, the last step just
+  // renders its fields + a Submit button like every other step — no
+  // separate summary page.
+  const showReview = enableReview && currentStep === totalSteps && totalSteps > 1;
 
   /* ==========================================================
      UI
