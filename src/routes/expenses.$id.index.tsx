@@ -29,7 +29,7 @@ function ViewExpense() {
   useEffect(() => {
     expenseService
       .getById(id)
-      .then((res) => setExp(res?.data))
+      .then((res) => setExp(res?.data)) // Adjust if your service returns data directly
       .catch((err) => {
         console.error("Failed to load expense:", err);
         toast.error("Failed to load expense", { description: err.message });
@@ -57,6 +57,7 @@ function ViewExpense() {
                 <Pencil className="h-4 w-4" /> Edit
               </Link>
             </Button>
+            {/* ✅ Removed the unrelated "Print Receipt" button */}
           </>
         }
       />
