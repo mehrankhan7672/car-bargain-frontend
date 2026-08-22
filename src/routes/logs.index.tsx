@@ -9,11 +9,9 @@ import {
   Building2,
   ArrowLeftRight,
   ListFilter,
-  Trash2,
   Wallet,
   ShieldCheck,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -23,7 +21,6 @@ import {
 } from "@/components/ui/select";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { ConfirmDelete } from "@/components/shared/ConfirmDelete";
 import { logService } from "@/services/logService";
 import { formatPKR } from "@/data/dummy";
 
@@ -46,9 +43,6 @@ export const Route = createFileRoute("/logs/")({
   component: LogsPage,
 });
 
-// FIX: kept in sync with the Log model's `category` enum — Expense and
-// Auth were added there but were missing here, so those log entries had
-// no dedicated tab and fell back to the generic "Other" look.
 const categories = [
   "All",
   "Car",
@@ -110,17 +104,6 @@ function LogsPage() {
     load(category);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
-
-  const remove = async (log: LogEntry) => {
-    try {
-      await logService.delete(log._id);
-      setLogs((prev) => prev.filter((l) => l._id !== log._id));
-      toast.success("Log entry deleted");
-    } catch (err) {
-      console.error("Delete log error:", err);
-      toast.error("Failed to delete log entry");
-    }
-  };
 
   const totalCount = Object.values(counts).reduce((a, b) => a + b, 0);
 
@@ -211,21 +194,9 @@ function LogsPage() {
                     {new Date(log.createdAt).toLocaleString()} · {log.performedBy}
                   </p>
                 </div>
-                <div className="flex shrink-0 items-center gap-2">
-                  {log.amount != null && (
-                    <span className="text-sm font-semibold">{formatPKR(log.amount)}</span>
-                  )}
-                  <ConfirmDelete itemName={log.title} onConfirm={() => remove(log)}>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="rounded-lg text-destructive"
-                      aria-label="Delete log"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </ConfirmDelete>
-                </div>
+                {log.amount != null && (
+                  <span className="shrink-0 text-sm font-semibold">{formatPKR(log.amount)}</span>
+                )}
               </div>
             );
           })}
