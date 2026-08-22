@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plus, Eye, Pencil, Trash2, Wallet, Receipt, TrendingDown } from "lucide-react";
 import { toast } from "sonner";
@@ -7,8 +7,19 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { StatCard } from "@/components/shared/StatCard";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDelete } from "@/components/shared/ConfirmDelete";
-import { useFakeLoading } from "@/hooks/use-fake-loading";
-import { expenses as seed, formatPKR, type Expense } from "@/data/dummy";
+import { expenseService } from "@/services/expenseService";
+import { formatPKR } from "@/data/dummy";
+
+// Adjust the Expense type to match your backend (_id instead of id)
+type Expense = {
+  _id: string;
+  title: string;
+  category: string;
+  amount: number;
+  date: string;
+  notes?: string;
+  userId?: string;
+};
 
 export const Route = createFileRoute("/expenses/")({
   head: () => ({
@@ -29,15 +40,39 @@ export const Route = createFileRoute("/expenses/")({
 });
 
 function ExpenseList() {
-  const loading = useFakeLoading();
-  const [rows, setRows] = useState<Expense[]>(seed);
+  const [rows, setRows] = useState<Expense[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  const fetchExpenses = async () => {
+    try {
+      // Fetch all expenses (limit 500 or a high number to get everything)
+      const response = await expenseService.getAll({ limit: 500 });
+      // The API returns { success, data, pagination, message }
+      const expenseData = response?.data || [];
+      setRows(Array.isArray(expenseData) ? expenseData : []);
+    } catch (err: any) {
+      toast.error("Failed to load expenses", { description: err.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
+
+  // Compute stats from the full list
   const total = rows.reduce((s, e) => s + e.amount, 0);
   const biggest = rows.length ? rows.reduce((m, e) => (e.amount > m.amount ? e : m)) : undefined;
 
-  const remove = (e: Expense) => {
-    setRows((prev) => prev.filter((x) => x.id !== e.id));
-    toast.success("Expense deleted", { description: `${e.title} removed from the list.` });
+  const remove = async (exp: Expense) => {
+    try {
+      await expenseService.delete(exp._id);
+      setRows((prev) => prev.filter((x) => x._id !== exp._id));
+      toast.success("Expense deleted", { description: `${exp.title} removed from the list.` });
+    } catch (err: any) {
+      toast.error("Failed to delete expense", { description: err.message });
+    }
   };
 
   const columns: Column<Expense>[] = [
@@ -65,7 +100,11 @@ function ExpenseList() {
       header: "Amount",
       cell: (e) => <span className="font-semibold">{formatPKR(e.amount)}</span>,
     },
-    { key: "date", header: "Date", cell: (e) => e.date },
+    {
+      key: "date",
+      header: "Date",
+      cell: (e) => new Date(e.date).toLocaleDateString(),
+    },
     {
       key: "actions",
       header: "Actions",
@@ -79,7 +118,7 @@ function ExpenseList() {
             className="rounded-lg"
             aria-label="View expense"
           >
-            <Link to="/expenses/$id" params={{ id: e.id }}>
+            <Link to="/expenses/$id" params={{ id: e._id }}>
               <Eye className="h-4 w-4" />
             </Link>
           </Button>
@@ -90,7 +129,7 @@ function ExpenseList() {
             className="rounded-lg"
             aria-label="Edit expense"
           >
-            <Link to="/expenses/$id/edit" params={{ id: e.id }}>
+            <Link to="/expenses/$id/edit" params={{ id: e._id }}>
               <Pencil className="h-4 w-4" />
             </Link>
           </Button>
@@ -137,7 +176,7 @@ function ExpenseList() {
         columns={columns}
         loading={loading}
         searchPlaceholder="Search by title or note..."
-        searchKeys={(e) => `${e.title} ${e.category} ${e.notes} ${e.date}`}
+        searchKeys={(e) => `${e.title} ${e.category} ${e.notes || ''} ${e.date}`}
         filters={[
           {
             label: "Category",
