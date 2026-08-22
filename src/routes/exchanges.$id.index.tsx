@@ -1,4 +1,4 @@
-// src/routes/exchanges/$id/index.tsx (updated with visible Print button)
+// src/routes/exchanges/$id/index.tsx (full updated with improved buttons)
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-router";
 import {
@@ -257,10 +257,10 @@ function ViewExchange() {
         subtitle={`${customerOwner.name || ""} · ${dateStr}`}
         actions={
           <>
-            {/* 👇 NEW: "Print Receipt (Image)" button - now first, solid amber */}
+            {/* 👇 Print Receipt button – amber outline, visible */}
             <Button
-              variant="default"
-              className="rounded-xl bg-amber-600 hover:bg-amber-700 text-white"
+              variant="outline"
+              className="rounded-xl border-2 border-amber-500 bg-amber-50 text-amber-700 hover:bg-amber-100 hover:text-amber-800 dark:border-amber-400 dark:bg-amber-950/30 dark:text-amber-300 dark:hover:bg-amber-950/50"
               onClick={() => {
                 navigate({
                   to: "/exchanges/invoice",
@@ -269,13 +269,13 @@ function ViewExchange() {
               }}
             >
               <Printer className="h-4 w-4 mr-2" />
-              Print Receipt (Image)
+              Print Receipt
             </Button>
 
             {canRecord && (
               <Button
                 variant="default"
-                className="rounded-xl bg-gold-600 hover:bg-gold-700"
+                className="rounded-xl bg-black hover:bg-black/90 text-white shadow-md hover:shadow-lg transition-all duration-200"
                 onClick={() => setPaymentDialogOpen(true)}
               >
                 <DollarSign className="h-4 w-4 mr-2" /> Record Payment
@@ -687,10 +687,11 @@ function ViewExchange() {
             >
               Cancel
             </Button>
+            {/* 👇 Record Payment button – black background, white text, shadow */}
             <Button
               onClick={handleRecordPayment}
               disabled={recording || paymentAmount <= 0 || paymentAmount > due || !paymentDate}
-              className="bg-black hover:bg-black/90 text-white"
+              className="bg-black hover:bg-black/90 text-white shadow-md hover:shadow-lg transition-all duration-200"
             >
               {recording ? "Recording..." : "Record Payment"}
             </Button>
