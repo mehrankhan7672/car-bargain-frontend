@@ -2,7 +2,17 @@
 import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Car, HandCoins, Users, Building2, ArrowLeftRight, ListFilter, Trash2 } from "lucide-react";
+import {
+  Car,
+  HandCoins,
+  Users,
+  Building2,
+  ArrowLeftRight,
+  ListFilter,
+  Trash2,
+  Wallet,
+  ShieldCheck,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -23,7 +33,8 @@ export const Route = createFileRoute("/logs/")({
       { title: "Activity Logs — Car Bargain Manager" },
       {
         name: "description",
-        content: "Every activity log across cars, exchanges, employees, salaries and dealers.",
+        content:
+          "Every activity log across cars, exchanges, employees, salaries, expenses, dealers and account activity.",
       },
       { property: "og:title", content: "Activity Logs — Car Bargain Manager" },
       {
@@ -35,14 +46,29 @@ export const Route = createFileRoute("/logs/")({
   component: LogsPage,
 });
 
-const categories = ["All", "Car", "Exchange", "Employee", "Salary", "Dealer", "Other"] as const;
+// FIX: kept in sync with the Log model's `category` enum — Expense and
+// Auth were added there but were missing here, so those log entries had
+// no dedicated tab and fell back to the generic "Other" look.
+const categories = [
+  "All",
+  "Car",
+  "Exchange",
+  "Employee",
+  "Salary",
+  "Expense",
+  "Dealer",
+  "Auth",
+  "Other",
+] as const;
 
 const categoryMeta: Record<string, { icon: typeof Car; className: string }> = {
   Car: { icon: Car, className: "bg-secondary text-secondary-foreground border-border" },
   Exchange: { icon: ArrowLeftRight, className: "bg-gold-soft text-gold-foreground border-gold/40" },
   Employee: { icon: Users, className: "bg-success/15 text-success border-success/30" },
   Salary: { icon: HandCoins, className: "bg-warning/20 text-warning-foreground border-warning/40" },
+  Expense: { icon: Wallet, className: "bg-destructive/15 text-destructive border-destructive/30" },
   Dealer: { icon: Building2, className: "bg-secondary text-secondary-foreground border-border" },
+  Auth: { icon: ShieldCheck, className: "bg-primary/15 text-primary border-primary/30" },
   Other: { icon: ListFilter, className: "bg-secondary text-secondary-foreground border-border" },
 };
 
