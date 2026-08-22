@@ -22,6 +22,7 @@ import { Route as DealersNewRouteImport } from './routes/dealers.new'
 import { Route as EmployeesIndexRouteImport } from './routes/employees.index'
 import { Route as EmployeesNewRouteImport } from './routes/employees.new'
 import { Route as ExchangesIndexRouteImport } from './routes/exchanges.index'
+import { Route as ExchangesInvoiceRouteImport } from './routes/exchanges.invoice'
 import { Route as ExchangesNewRouteImport } from './routes/exchanges.new'
 import { Route as ExpensesIndexRouteImport } from './routes/expenses.index'
 import { Route as ExpensesNewRouteImport } from './routes/expenses.new'
@@ -104,6 +105,11 @@ const EmployeesNewRoute = EmployeesNewRouteImport.update({
 const ExchangesIndexRoute = ExchangesIndexRouteImport.update({
   id: '/exchanges/',
   path: '/exchanges/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExchangesInvoiceRoute = ExchangesInvoiceRouteImport.update({
+  id: '/exchanges/invoice',
+  path: '/exchanges/invoice',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExchangesNewRoute = ExchangesNewRouteImport.update({
@@ -207,6 +213,7 @@ export interface FileRoutesByFullPath {
   '/cars/new': typeof CarsNewRoute
   '/dealers/new': typeof DealersNewRoute
   '/employees/new': typeof EmployeesNewRoute
+  '/exchanges/invoice': typeof ExchangesInvoiceRoute
   '/exchanges/new': typeof ExchangesNewRoute
   '/expenses/new': typeof ExpensesNewRoute
   '/sales/invoice': typeof SalesInvoiceRoute
@@ -240,6 +247,7 @@ export interface FileRoutesByTo {
   '/cars/new': typeof CarsNewRoute
   '/dealers/new': typeof DealersNewRoute
   '/employees/new': typeof EmployeesNewRoute
+  '/exchanges/invoice': typeof ExchangesInvoiceRoute
   '/exchanges/new': typeof ExchangesNewRoute
   '/expenses/new': typeof ExpensesNewRoute
   '/sales/invoice': typeof SalesInvoiceRoute
@@ -274,6 +282,7 @@ export interface FileRoutesById {
   '/cars/new': typeof CarsNewRoute
   '/dealers/new': typeof DealersNewRoute
   '/employees/new': typeof EmployeesNewRoute
+  '/exchanges/invoice': typeof ExchangesInvoiceRoute
   '/exchanges/new': typeof ExchangesNewRoute
   '/expenses/new': typeof ExpensesNewRoute
   '/sales/invoice': typeof SalesInvoiceRoute
@@ -309,6 +318,7 @@ export interface FileRouteTypes {
     | '/cars/new'
     | '/dealers/new'
     | '/employees/new'
+    | '/exchanges/invoice'
     | '/exchanges/new'
     | '/expenses/new'
     | '/sales/invoice'
@@ -342,6 +352,7 @@ export interface FileRouteTypes {
     | '/cars/new'
     | '/dealers/new'
     | '/employees/new'
+    | '/exchanges/invoice'
     | '/exchanges/new'
     | '/expenses/new'
     | '/sales/invoice'
@@ -375,6 +386,7 @@ export interface FileRouteTypes {
     | '/cars/new'
     | '/dealers/new'
     | '/employees/new'
+    | '/exchanges/invoice'
     | '/exchanges/new'
     | '/expenses/new'
     | '/sales/invoice'
@@ -409,6 +421,7 @@ export interface RootRouteChildren {
   CarsNewRoute: typeof CarsNewRoute
   DealersNewRoute: typeof DealersNewRoute
   EmployeesNewRoute: typeof EmployeesNewRoute
+  ExchangesInvoiceRoute: typeof ExchangesInvoiceRoute
   ExchangesNewRoute: typeof ExchangesNewRoute
   ExpensesNewRoute: typeof ExpensesNewRoute
   SalesInvoiceRoute: typeof SalesInvoiceRoute
@@ -524,6 +537,13 @@ declare module '@tanstack/react-router' {
       path: '/exchanges'
       fullPath: '/exchanges/'
       preLoaderRoute: typeof ExchangesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exchanges/invoice': {
+      id: '/exchanges/invoice'
+      path: '/exchanges/invoice'
+      fullPath: '/exchanges/invoice'
+      preLoaderRoute: typeof ExchangesInvoiceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/exchanges/new': {
@@ -665,6 +685,7 @@ const rootRouteChildren: RootRouteChildren = {
   CarsNewRoute: CarsNewRoute,
   DealersNewRoute: DealersNewRoute,
   EmployeesNewRoute: EmployeesNewRoute,
+  ExchangesInvoiceRoute: ExchangesInvoiceRoute,
   ExchangesNewRoute: ExchangesNewRoute,
   ExpensesNewRoute: ExpensesNewRoute,
   SalesInvoiceRoute: SalesInvoiceRoute,
