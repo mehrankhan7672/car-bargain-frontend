@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { EntityForm } from "@/components/shared/EntityForm";
 import { expenseFields, expenseSteps } from "@/data/field-configs";
+import { expenseService } from "@/services/expenseService";
 
 export const Route = createFileRoute("/expenses/new")({
   head: () => ({
@@ -29,7 +30,11 @@ function AddExpense() {
         backTo="/expenses"
         submitLabel="Save Expense"
         successMessage="Expense added"
+        enableReview={false}
         defaultValues={{ title: "", category: "", amount: "", date: "", notes: "" }}
+        onSubmit={async (data: any) => {
+          await expenseService.create(data);
+        }}
       />
     </div>
   );
