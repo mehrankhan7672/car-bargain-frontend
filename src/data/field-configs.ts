@@ -471,7 +471,13 @@ export const dealerFields: FieldConfig[] = [
 ];
 
 export const expenseFields: FieldConfig[] = [
-  { name: "title", label: "Expense Title", placeholder: "Engine tuning - Corolla", step: 1 },
+  {
+    name: "title",
+    label: "Expense Title",
+    type: "text",
+    placeholder: "e.g. Workshop AC repair",
+    step: 1,
+  },
   {
     name: "category",
     label: "Category",
@@ -479,7 +485,7 @@ export const expenseFields: FieldConfig[] = [
     options: ["Repair", "Fuel", "Office", "Salary", "Marketing", "Other"],
     step: 1,
   },
-  { name: "amount", label: "Amount (PKR)", type: "number", placeholder: "45000", step: 1 },
+  { name: "amount", label: "Amount (PKR)", type: "number", placeholder: "5000", step: 1 },
   { name: "date", label: "Date", type: "date", step: 1 },
   {
     name: "notes",
@@ -487,7 +493,7 @@ export const expenseFields: FieldConfig[] = [
     type: "textarea",
     optional: true,
     full: true,
-    placeholder: "Extra detail",
+    placeholder: "Optional notes...",
     step: 1,
   },
 ];
@@ -534,12 +540,12 @@ export const dealerSteps: StepConfig[] = [
   },
 ];
 
-export const expenseSteps = [
+export const expenseSteps: StepConfig[] = [
   {
     step: 1,
     title: "Expense Details",
-    icon: "💵",
-    description: "Enter what this expense is for",
+    icon: "🧾",
+    description: "Title, category, amount and date",
   },
 ];
 

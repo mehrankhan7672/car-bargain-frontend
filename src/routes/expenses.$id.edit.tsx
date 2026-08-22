@@ -48,12 +48,16 @@ function EditExpense() {
         backTo="/expenses"
         submitLabel="Update Expense"
         successMessage="Expense updated"
+        enableReview={false}
         defaultValues={{
           title: exp.title,
           category: exp.category,
           amount: String(exp.amount),
           date: exp.date ? new Date(exp.date).toISOString().slice(0, 10) : "",
           notes: exp.notes || "",
+        }}
+        onSubmit={async (data: any) => {
+          await expenseService.update(exp._id, data);
         }}
       />
     </div>
