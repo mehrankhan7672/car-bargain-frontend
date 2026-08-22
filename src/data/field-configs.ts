@@ -541,7 +541,6 @@ export const expenseSteps = [
     icon: "💵",
     description: "Enter what this expense is for",
   },
-  { step: 2, title: "Review", icon: "✓", description: "Review all information before saving" },
 ];
 
 export const employeeSteps = [
