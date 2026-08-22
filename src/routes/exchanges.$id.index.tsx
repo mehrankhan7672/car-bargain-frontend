@@ -1,6 +1,6 @@
-// src/routes/exchanges/$id/index.tsx (full updated)
+// src/routes/exchanges/$id/index.tsx (updated)
 import { useEffect, useState } from "react";
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-router";
 import {
   ArrowLeft,
   Pencil,
@@ -11,6 +11,7 @@ import {
   Car,
   ArrowRight,
   DollarSign,
+  Printer,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -139,6 +140,7 @@ function VehicleSummary({
 
 function ViewExchange() {
   const { id } = useParams({ from: "/exchanges/$id/" });
+  const navigate = useNavigate(); // 👈 added for external invoice route
   const [ex, setEx] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
@@ -264,6 +266,22 @@ function ViewExchange() {
                 <DollarSign className="h-4 w-4 mr-2" /> Record Payment
               </Button>
             )}
+
+            {/* 👇 NEW: Print Image Receipt button */}
+            <Button
+              variant="outline"
+              className="rounded-xl"
+              onClick={() => {
+                navigate({
+                  to: "/exchanges/invoice",
+                  state: { exchange: ex },
+                });
+              }}
+            >
+              <Printer className="h-4 w-4 mr-2" />
+              Print (Image Receipt)
+            </Button>
+
             <Button asChild variant="outline" className="rounded-xl">
               <Link to="/exchanges">
                 <ArrowLeft className="h-4 w-4" /> Back
