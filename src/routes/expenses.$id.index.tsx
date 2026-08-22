@@ -1,10 +1,13 @@
+import { useEffect, useState } from "react";
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { ArrowLeft, Pencil } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { DetailCard, DetailRow } from "@/components/shared/DetailCard";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { expenses, formatPKR } from "@/data/dummy";
+import { expenseService } from "@/services/expenseService";
+import { formatPKR } from "@/data/dummy";
 
 export const Route = createFileRoute("/expenses/$id/")({
   head: () => ({
@@ -20,14 +23,28 @@ export const Route = createFileRoute("/expenses/$id/")({
 
 function ViewExpense() {
   const { id } = useParams({ from: "/expenses/$id/" });
-  const exp = expenses.find((e) => e.id === id);
+  const [exp, setExp] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    expenseService
+      .getById(id)
+      .then((res) => setExp(res?.data))
+      .catch((err) => {
+        console.error("Failed to load expense:", err);
+        toast.error("Failed to load expense", { description: err.message });
+      })
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) return null;
   if (!exp) return <EmptyState title="Expense not found" />;
 
   return (
     <div className="mx-auto w-full max-w-3xl">
       <PageHeader
         title={exp.title}
-        subtitle={`${exp.category} · ${exp.date}`}
+        subtitle={`${exp.category} · ${new Date(exp.date).toLocaleDateString()}`}
         actions={
           <>
             <Button asChild variant="outline" className="rounded-xl">
@@ -36,7 +53,7 @@ function ViewExpense() {
               </Link>
             </Button>
             <Button asChild className="rounded-xl">
-              <Link to="/expenses/$id/edit" params={{ id: exp.id }}>
+              <Link to="/expenses/$id/edit" params={{ id: exp._id }}>
                 <Pencil className="h-4 w-4" /> Edit
               </Link>
             </Button>
@@ -47,7 +64,7 @@ function ViewExpense() {
         <DetailRow label="Expense Title" value={exp.title} />
         <DetailRow label="Category" value={exp.category} />
         <DetailRow label="Amount" value={formatPKR(exp.amount)} />
-        <DetailRow label="Date" value={exp.date} />
+        <DetailRow label="Date" value={new Date(exp.date).toLocaleDateString()} />
         <DetailRow label="Notes" value={exp.notes || "—"} />
       </DetailCard>
     </div>

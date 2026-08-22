@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
 import { createFileRoute, useParams } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { EntityForm } from "@/components/shared/EntityForm";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { expenseFields, expenseSteps } from "@/data/field-configs";
-import { expenses } from "@/data/dummy";
+import { expenseService } from "@/services/expenseService";
 
 export const Route = createFileRoute("/expenses/$id/edit")({
   head: () => ({
@@ -19,7 +21,21 @@ export const Route = createFileRoute("/expenses/$id/edit")({
 
 function EditExpense() {
   const { id } = useParams({ from: "/expenses/$id/edit" });
-  const exp = expenses.find((e) => e.id === id);
+  const [exp, setExp] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    expenseService
+      .getById(id)
+      .then((res) => setExp(res?.data))
+      .catch((err) => {
+        console.error("Failed to load expense:", err);
+        toast.error("Failed to load expense", { description: err.message });
+      })
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) return null;
   if (!exp) return <EmptyState title="Expense not found" />;
 
   return (
@@ -36,8 +52,8 @@ function EditExpense() {
           title: exp.title,
           category: exp.category,
           amount: String(exp.amount),
-          date: exp.date,
-          notes: exp.notes,
+          date: exp.date ? new Date(exp.date).toISOString().slice(0, 10) : "",
+          notes: exp.notes || "",
         }}
       />
     </div>
