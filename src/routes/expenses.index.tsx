@@ -176,7 +176,7 @@ function ExpenseList() {
         columns={columns}
         loading={loading}
         searchPlaceholder="Search by title or note..."
-        searchKeys={(e) => `${e.title} ${e.category} ${e.notes || ''} ${e.date}`}
+        searchKeys={(e) => `${e.title} ${e.category} ${e.notes || ""} ${e.date}`}
         filters={[
           {
             label: "Category",
