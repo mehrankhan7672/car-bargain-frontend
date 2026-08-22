@@ -44,9 +44,10 @@ function ExpensesList() {
 
   const fetchExpenses = async () => {
     try {
-      // getAll returns the array directly
-      const data = await expenseService.getAll();
-      setExpenses(Array.isArray(data) ? data : []);
+      const response = await expenseService.getAll();
+      // ✅ Extract the array from the response
+      const expenseArray = response?.data || [];
+      setExpenses(Array.isArray(expenseArray) ? expenseArray : []);
     } catch (err: any) {
       toast.error("Failed to load expenses", { description: err.message });
     } finally {
@@ -117,12 +118,22 @@ function ExpensesList() {
                   <TableCell>{new Date(exp.date).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
-                      <Button variant="ghost" size="icon" asChild className="h-8 w-8">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        asChild
+                        className="h-8 w-8"
+                      >
                         <Link to="/expenses/$id" params={{ id: exp._id }}>
                           <Eye className="h-4 w-4" />
                         </Link>
                       </Button>
-                      <Button variant="ghost" size="icon" asChild className="h-8 w-8">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        asChild
+                        className="h-8 w-8"
+                      >
                         <Link to="/expenses/$id/edit" params={{ id: exp._id }}>
                           <Pencil className="h-4 w-4" />
                         </Link>
@@ -142,8 +153,7 @@ function ExpensesList() {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Delete Expense</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Are you sure you want to delete "{exp.title}"? This action cannot be
-                              undone.
+                              Are you sure you want to delete "{exp.title}"? This action cannot be undone.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
