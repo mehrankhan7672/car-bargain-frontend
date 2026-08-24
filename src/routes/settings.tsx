@@ -9,7 +9,6 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { Logo } from "@/components/brand/Logo";
 import { useTheme } from "@/components/layout/Topbar";
 import { business } from "@/data/dummy";
-import { StaffTab } from "../settings/StaffTab";
 import { useAuth } from "@/contexts/AuthContext";
 
 export const Route = createFileRoute("/settings")({
@@ -120,12 +119,6 @@ function Settings() {
             </div>
           </div>
         </TabsContent>
-
-        {isOwner && (
-          <TabsContent value="staff">
-            <StaffTab />
-          </TabsContent>
-        )}
 
         <TabsContent value="theme">
           <div className="card-soft flex items-center justify-between gap-4 p-6">
