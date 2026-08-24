@@ -9,7 +9,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { Logo } from "@/components/brand/Logo";
 import { useTheme } from "@/components/layout/Topbar";
 import { business } from "@/data/dummy";
-import { StaffTab } from "@/components/settings/StaffTab";
+import { StaffTab } from "../settings/StaffTab";
 import { useAuth } from "@/contexts/AuthContext";
 
 export const Route = createFileRoute("/settings")({
