@@ -9,6 +9,8 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { Logo } from "@/components/brand/Logo";
 import { useTheme } from "@/components/layout/Topbar";
 import { business } from "@/data/dummy";
+import { StaffTab } from "@/components/settings/StaffTab";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -27,6 +29,7 @@ export const Route = createFileRoute("/settings")({
 
 function Settings() {
   const { dark, setDark } = useTheme();
+  const { isOwner } = useAuth();
   const save = () =>
     toast.success("Settings saved", { description: "Demo mode — nothing is stored." });
 
@@ -38,6 +41,7 @@ function Settings() {
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="business">Business</TabsTrigger>
           <TabsTrigger value="security">Password</TabsTrigger>
+          {isOwner && <TabsTrigger value="staff">Staff & Permissions</TabsTrigger>}
           <TabsTrigger value="theme">Theme</TabsTrigger>
         </TabsList>
 
@@ -116,6 +120,12 @@ function Settings() {
             </div>
           </div>
         </TabsContent>
+
+        {isOwner && (
+          <TabsContent value="staff">
+            <StaffTab />
+          </TabsContent>
+        )}
 
         <TabsContent value="theme">
           <div className="card-soft flex items-center justify-between gap-4 p-6">

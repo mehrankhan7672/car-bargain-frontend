@@ -1,8 +1,18 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
+export interface UserPermissions {
+  canView: boolean;
+  canAdd: boolean;
+  canEdit: boolean;
+  canDelete: boolean;
+}
+
 interface User {
   name: string;
   email: string;
+  tenantId?: string | null;
+  addedBy?: string | null;
+  permissions?: UserPermissions;
   [key: string]: any;
 }
 
@@ -10,20 +20,17 @@ export interface AuthContextType {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
-  /** True once we've checked localStorage on the client. Used to avoid
-   * flashing protected content (or the login page) before we actually know. */
   hydrated: boolean;
+  isOwner: boolean;
+  can: (permission: keyof UserPermissions) => boolean;
   login: (user: User, token: string) => void;
   logout: () => void;
+  updateUser: (patch: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // Start as "logged out" on both server and client so the very first
-  // client render matches the server-rendered HTML (avoids hydration
-  // mismatches). The real value is read from localStorage in useEffect,
-  // which only runs in the browser, after mount.
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [hydrated, setHydrated] = useState(false);
@@ -51,9 +58,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
+  const updateUser = (patch: Partial<User>) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const next = { ...prev, ...patch };
+      localStorage.setItem("user", JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const isOwner = !!user && !user.tenantId;
+
+  const can = (permission: keyof UserPermissions) => {
+    if (isOwner) return true;
+    return user?.permissions?.[permission] ?? true;
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, token, isAuthenticated: !!token, hydrated, login, logout }}
+      value={{
+        user,
+        token,
+        isAuthenticated: !!token,
+        hydrated,
+        isOwner,
+        can,
+        login,
+        logout,
+        updateUser,
+      }}
     >
       {children}
     </AuthContext.Provider>
