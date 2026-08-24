@@ -24,7 +24,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ConfirmDelete } from "@/components/shared/ConfirmDelete";
-import { staffService } from "@/services/staffService";
+import { staffService } from "../services/staffService";
 import { useAuth, type UserPermissions } from "@/contexts/AuthContext";
 
 type StaffMember = {
@@ -250,13 +250,13 @@ export function StaffTab() {
   const [loading, setLoading] = useState(true);
   const [editingStaff, setEditingStaff] = useState<StaffMember | null>(null);
 
+  // Fetch all staff accounts (backend already scopes to your tenant)
   const load = () => {
     setLoading(true);
     staffService
       .getAll()
       .then((res) => {
-        const users: StaffMember[] = res?.users || [];
-        setStaff(users.filter((u) => !!u.tenantId));
+        setStaff(res?.staff || []);
       })
       .catch((err) => {
         console.error("Failed to load staff:", err);
@@ -269,15 +269,16 @@ export function StaffTab() {
     load();
   }, []);
 
-  const deactivate = async (member: StaffMember) => {
+  // Permanently delete a staff account (calls DELETE /auth/staff/:id)
+  const removeStaff = async (member: StaffMember) => {
     try {
       await staffService.remove(member._id);
-      toast.success("Staff account deactivated", {
-        description: `${member.name} can no longer log in.`,
+      toast.success("Staff account deleted", {
+        description: `${member.name} has been permanently removed.`,
       });
       load();
     } catch (err: any) {
-      toast.error("Failed to deactivate staff account", { description: err.message });
+      toast.error("Failed to delete staff account", { description: err.message });
     }
   };
 
@@ -358,18 +359,18 @@ export function StaffTab() {
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      {member.isActive && (
-                        <ConfirmDelete itemName={member.name} onConfirm={() => deactivate(member)}>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="rounded-lg text-destructive"
-                            aria-label="Deactivate staff"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </ConfirmDelete>
-                      )}
+
+                      {/* Delete button – calls hard delete API */}
+                      <ConfirmDelete itemName={member.name} onConfirm={() => removeStaff(member)}>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="rounded-lg text-destructive"
+                          aria-label="Delete staff"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </ConfirmDelete>
                     </div>
                   </TableCell>
                 </TableRow>

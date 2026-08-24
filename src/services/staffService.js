@@ -3,7 +3,7 @@ import api from "./api";
 
 export const staffService = {
   getAll: async () => {
-    const response = await api.get("/auth/users");
+    const response = await api.get("/auth/staff");
     return response.data;
   },
   create: async (data) => {
@@ -12,6 +12,10 @@ export const staffService = {
   },
   update: async (id, data) => {
     const response = await api.put(`/auth/staff/${id}`, data);
+    return response.data;
+  },
+  setStatus: async (id, isActive) => {
+    const response = await api.patch(`/auth/staff/${id}/status`, { isActive });
     return response.data;
   },
   remove: async (id) => {
