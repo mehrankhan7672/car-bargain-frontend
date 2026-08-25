@@ -3,19 +3,19 @@ import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-r
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { EntityForm } from "@/components/shared/EntityForm";
+import { DealerForm, type DealerFormValues } from "@/components/shared/DealerForm";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { dealerFields, dealerSteps } from "@/data/field-configs";
 import { dealerService } from "@/services/dealerService";
 
 interface Dealer {
   id: string;
-  _id?: string; // FIX: backend returns Mongo's _id — normalized into id below
+  _id?: string;
   name: string;
   phone: string;
   cnic: string;
   address: string;
   notes?: string;
+  formLanguage?: "en" | "ur";
   createdAt: string;
   updatedAt: string;
 }
@@ -48,8 +48,6 @@ function EditDealer() {
       setLoading(true);
       setError(null);
       const response = await dealerService.getById(id);
-      // FIX: normalize _id -> id for consistency with the rest of the app,
-      // even though this page itself only reads dealer.name below.
       setDealer({ ...response.data, id: response.data.id ?? response.data._id });
     } catch (error: any) {
       console.error("Error fetching dealer:", error);
@@ -59,7 +57,7 @@ function EditDealer() {
     }
   };
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: DealerFormValues) => {
     try {
       await dealerService.update(id, data);
       toast.success("Dealer updated successfully", {
@@ -69,7 +67,6 @@ function EditDealer() {
     } catch (error: any) {
       console.error("Error updating dealer:", error);
 
-      // Handle validation errors from backend
       if (error.response?.data?.errors) {
         const errorMessages = error.response.data.errors;
         toast.error(errorMessages[0] || "Validation error", {
@@ -106,8 +103,6 @@ function EditDealer() {
         <EmptyState
           title={error || "Dealer not found"}
           action={
-            // FIX: Link wasn't imported at all before — this crashed the
-            // page with "Link is not defined" any time the fetch failed.
             <Button asChild variant="outline">
               <Link to="/dealers">Back to Dealers</Link>
             </Button>
@@ -120,21 +115,18 @@ function EditDealer() {
   return (
     <div className="mx-auto w-full max-w-4xl">
       <PageHeader title="Edit Dealer" subtitle={dealer.name} />
-      <EntityForm
-        fields={dealerFields}
-        steps={dealerSteps}
-        entityLabel="Dealer"
-        backTo="/dealers"
+      <DealerForm
+        mode="edit"
         submitLabel="Update Dealer"
-        successMessage="Dealer updated"
+        onSubmit={handleSubmit}
         defaultValues={{
           name: dealer.name,
           phone: dealer.phone,
           cnic: dealer.cnic,
           address: dealer.address,
           notes: dealer.notes || "",
+          formLanguage: dealer.formLanguage || "en",
         }}
-        onSubmit={handleSubmit}
       />
     </div>
   );

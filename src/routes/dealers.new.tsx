@@ -2,8 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { EntityForm } from "@/components/shared/EntityForm";
-import { dealerFields, dealerSteps } from "@/data/field-configs";
+import { DealerForm, type DealerFormValues } from "@/components/shared/DealerForm";
 import { dealerService } from "@/services/dealerService";
 
 export const Route = createFileRoute("/dealers/new")({
@@ -21,7 +20,7 @@ export const Route = createFileRoute("/dealers/new")({
 function AddDealer() {
   const navigate = useNavigate();
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: DealerFormValues) => {
     try {
       await dealerService.create(data);
       toast.success("Dealer added successfully", {
@@ -31,7 +30,6 @@ function AddDealer() {
     } catch (error: any) {
       console.error("Error creating dealer:", error);
 
-      // Handle validation errors from backend
       if (error.response?.data?.errors) {
         const errorMessages = error.response.data.errors;
         toast.error(errorMessages[0] || "Validation error", {
@@ -53,22 +51,7 @@ function AddDealer() {
   return (
     <div className="mx-auto w-full max-w-4xl">
       <PageHeader title="Add Dealer" subtitle="Enter the dealer contact details" />
-      <EntityForm
-        fields={dealerFields}
-        steps={dealerSteps}
-        entityLabel="Dealer"
-        backTo="/dealers"
-        submitLabel="Save Dealer"
-        successMessage="Dealer added"
-        defaultValues={{
-          name: "",
-          phone: "",
-          cnic: "",
-          address: "",
-          notes: "",
-        }}
-        onSubmit={handleSubmit}
-      />
+      <DealerForm mode="new" submitLabel="Save Dealer" onSubmit={handleSubmit} />
     </div>
   );
 }
