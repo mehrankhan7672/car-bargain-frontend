@@ -25,7 +25,9 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { carService } from "@/services/carService";
-import { Car, User, CreditCard, DollarSign, Loader2, CheckCircle2 } from "lucide-react";
+import { Car, User, CreditCard, DollarSign, Loader2, CheckCircle2, Languages } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { saleService } from "../../services/saleService";
 
 export const Route = createFileRoute("/sales/")({
   component: SalesPage,
@@ -46,10 +48,6 @@ const salesSchema = z.object({
 
 type SalesFormData = z.infer<typeof salesSchema>;
 
-// Loosely typed on purpose — `[key: string]: any` means whatever your
-// backend actually sends (today or after you add engine#/chassis#/CC/
-// address later) is preserved. We only declare the fields we rely on
-// directly in this file's own UI (dropdown label, price defaults, etc).
 interface Car {
   _id: string;
   userName: string;
@@ -63,7 +61,7 @@ interface Car {
   registrationNumber?: string;
   color: string;
   condition: string;
-  carType: string; // "NCP (Non-Custom Paid)" | "CP (Custom Paid)"
+  carType: string;
   salePrice: number;
   status: string;
   images: string[];
@@ -79,6 +77,89 @@ const formatPKR = (amount: number) => {
   }).format(amount);
 };
 
+const COPY = {
+  en: {
+    pageTitle: "New Sale",
+    pageSubtitle: "Record a new car sale transaction",
+    languageLabel: "Form Language",
+    selectCarTitle: "Select Car",
+    availableCars: "Available Cars",
+    loadingCars: "Loading cars...",
+    selectCarPlaceholder: "Select a car to sell",
+    noCarsFound: "No available cars found",
+    carLabel: "Car",
+    yearLabel: "Year",
+    registrationLabel: "Registration",
+    salePriceLabel: "Sale Price",
+    buyerInfoTitle: "Buyer Information",
+    buyerName: "Buyer Name",
+    buyerNamePlaceholder: "Enter buyer name",
+    fatherName: "Father's Name",
+    fatherNamePlaceholder: "Enter father's name",
+    phone: "Phone Number",
+    phonePlaceholder: "0300-1234567",
+    cnic: "CNIC Number",
+    cnicPlaceholder: "1234567890123",
+    address: "Full Address",
+    addressPlaceholder: "Enter complete address",
+    paymentTitle: "Payment Details",
+    paymentType: "Payment Type",
+    paymentTypePlaceholder: "Select payment type",
+    fullPayment: "Full Payment",
+    instalment: "Instalment",
+    paymentAmount: "Payment Amount",
+    paymentAmountPlaceholder: "Enter full payment amount",
+    totalPrice: "Total Price",
+    advancePayment: "Advance Payment",
+    advancePaymentPlaceholder: "Enter advance payment",
+    nextInstalmentDate: "Next Instalment Date",
+    processing: "Processing...",
+    completedRedirecting: "Sale Completed - Redirecting to Invoice...",
+    completeSale: "Complete Sale",
+    na: "N/A",
+  },
+  ur: {
+    pageTitle: "نئی فروخت",
+    pageSubtitle: "نئی گاڑی کی فروخت کا اندراج کریں",
+    languageLabel: "فارم کی زبان",
+    selectCarTitle: "گاڑی منتخب کریں",
+    availableCars: "دستیاب گاڑیاں",
+    loadingCars: "گاڑیاں لوڈ ہو رہی ہیں...",
+    selectCarPlaceholder: "فروخت کے لیے گاڑی منتخب کریں",
+    noCarsFound: "کوئی دستیاب گاڑی نہیں ملی",
+    carLabel: "گاڑی",
+    yearLabel: "سال",
+    registrationLabel: "رجسٹریشن",
+    salePriceLabel: "فروخت قیمت",
+    buyerInfoTitle: "خریدار کی معلومات",
+    buyerName: "خریدار کا نام",
+    buyerNamePlaceholder: "خریدار کا نام درج کریں",
+    fatherName: "والد کا نام",
+    fatherNamePlaceholder: "والد کا نام درج کریں",
+    phone: "فون نمبر",
+    phonePlaceholder: "0300-1234567",
+    cnic: "شناختی کارڈ نمبر",
+    cnicPlaceholder: "1234567890123",
+    address: "مکمل پتہ",
+    addressPlaceholder: "مکمل پتہ درج کریں",
+    paymentTitle: "ادائیگی کی تفصیلات",
+    paymentType: "ادائیگی کی قسم",
+    paymentTypePlaceholder: "ادائیگی کی قسم منتخب کریں",
+    fullPayment: "مکمل ادائیگی",
+    instalment: "قسط وار",
+    paymentAmount: "ادائیگی کی رقم",
+    paymentAmountPlaceholder: "مکمل ادائیگی کی رقم درج کریں",
+    totalPrice: "کل قیمت",
+    advancePayment: "پیشگی رقم",
+    advancePaymentPlaceholder: "پیشگی رقم درج کریں",
+    nextInstalmentDate: "اگلی قسط کی تاریخ",
+    processing: "کارروائی جاری ہے...",
+    completedRedirecting: "فروخت مکمل ہوگئی - رسید کی طرف جا رہے ہیں...",
+    completeSale: "فروخت مکمل کریں",
+    na: "دستیاب نہیں",
+  },
+} as const;
+
 function SalesPage() {
   const navigate = useNavigate();
   const [cars, setCars] = useState<Car[]>([]);
@@ -86,6 +167,12 @@ function SalesPage() {
   const [loading, setLoading] = useState(false);
   const [carsLoading, setCarsLoading] = useState(true);
   const [saleCompleted, setSaleCompleted] = useState(false);
+  const [language, setLanguage] = useState<"en" | "ur">("en");
+
+  const t = COPY[language];
+  const isUrdu = language === "ur";
+  const textFieldDir = isUrdu ? "rtl" : "ltr";
+  const textFieldAlign = isUrdu ? "text-right" : "text-left";
 
   const form = useForm<SalesFormData>({
     resolver: zodResolver(salesSchema),
@@ -124,23 +211,26 @@ function SalesPage() {
     form.setValue("carId", carId);
 
     if (car) {
-      console.log("Selected car — full raw object from API:", car);
-      console.table(car);
       form.setValue("fullPaymentAmount", car.salePrice.toString());
     }
   };
 
   const onSubmit = async (data: SalesFormData) => {
+    if (!selectedCar) {
+      toast.error("Please select a car first");
+      return;
+    }
+
     try {
       setLoading(true);
 
-      const saleDataToSave = {
-        carId: data.carId,
+      const apiPayload = {
+        carId: selectedCar._id,
         buyerName: data.buyerName,
-        fatherName: data.fatherName,
-        address: data.address,
-        phone: data.phone,
-        cnic: data.cnic,
+        buyerFatherName: data.fatherName,
+        buyerAddress: data.address,
+        buyerPhone: data.phone,
+        buyerCnic: data.cnic,
         paymentType: data.paymentType,
         ...(data.paymentType === "Full Payment" && {
           fullPaymentAmount: parseFloat(data.fullPaymentAmount || "0"),
@@ -148,18 +238,17 @@ function SalesPage() {
         ...(data.paymentType === "Instalment" && {
           advancePayment: parseFloat(data.advancePayment || "0"),
           instalmentDate: data.instalmentDate,
+          monthlyInstalment: 0,
         }),
         saleDate: new Date().toISOString(),
+        formLanguage: language,
       };
 
-      // TODO: replace with real API call
-      // const response = await salesService.create(saleDataToSave);
+      const response = await saleService.create(apiPayload);
+      const savedSale = response.data;
 
-      // Pass the ENTIRE selected car through as-is. Whatever fields your
-      // /api/cars response has today (or gains later — address, engine#,
-      // chassis#, CC) show up on the invoice automatically. No manual
-      // field-picking here to keep in sync.
       const invoiceData = {
+        saleId: savedSale._id,
         car: { ...selectedCar },
         buyer: {
           name: data.buyerName,
@@ -176,23 +265,24 @@ function SalesPage() {
           ...(data.paymentType === "Instalment" && {
             advancePayment: parseFloat(data.advancePayment || "0"),
             instalmentDate: data.instalmentDate,
-            monthlyInstalment: 0, // placeholder — not collected on this form yet
+            monthlyInstalment: 0,
           }),
         },
-        saleDate: new Date().toISOString(),
+        saleDate: savedSale.saleDate,
+        formLanguage: language,
       };
 
       setSaleCompleted(true);
 
       toast.success("Sale recorded successfully!", {
-        description: `${selectedCar?.company} ${selectedCar?.model} has been sold.`,
+        description: `${selectedCar.company} ${selectedCar.model} has been sold.`,
       });
 
       navigate({ to: "/sales/invoice", state: invoiceData });
     } catch (error: any) {
       console.error("Error creating sale:", error);
       toast.error("Failed to complete sale", {
-        description: error.response?.data?.message || "Please try again.",
+        description: error.message || "Please try again.",
       });
     } finally {
       setLoading(false);
@@ -201,20 +291,53 @@ function SalesPage() {
 
   const getCarDisplayName = (car: Car) => {
     const regNumber = car.carType === "CP (Custom Paid)" ? car.registrationNumber : car.localNumber;
-    return `${car.company} ${car.model} (${car.year}) - ${regNumber || "N/A"}`;
+    return `${car.company} ${car.model} (${car.year}) - ${regNumber || t.na}`;
   };
 
   return (
     <div className="mx-auto w-full max-w-4xl p-4">
-      <PageHeader title="New Sale" subtitle="Record a new car sale transaction" />
+      <PageHeader title={t.pageTitle} subtitle={t.pageSubtitle} />
+
+      <div className="card-soft mb-6 flex items-center justify-between gap-4 p-4">
+        <div className="flex items-center gap-2">
+          <Languages className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm font-medium">{t.languageLabel}</span>
+        </div>
+        <div className="inline-flex rounded-xl border border-border p-1">
+          <button
+            type="button"
+            onClick={() => setLanguage("en")}
+            className={cn(
+              "rounded-lg px-4 py-1.5 text-sm font-medium transition-colors",
+              !isUrdu ? "bg-primary text-primary-foreground" : "text-muted-foreground",
+            )}
+          >
+            English
+          </button>
+          <button
+            type="button"
+            onClick={() => setLanguage("ur")}
+            className={cn(
+              "rounded-lg px-4 py-1.5 text-sm font-medium transition-colors",
+              isUrdu ? "bg-primary text-primary-foreground" : "text-muted-foreground",
+            )}
+          >
+            اردو
+          </button>
+        </div>
+      </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6"
+          dir={isUrdu ? "rtl" : "ltr"}
+        >
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Car className="h-5 w-5" />
-                Select Car
+                {t.selectCarTitle}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -223,7 +346,7 @@ function SalesPage() {
                 name="carId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Available Cars</FormLabel>
+                    <FormLabel>{t.availableCars}</FormLabel>
                     <Select
                       onValueChange={(value) => {
                         field.onChange(value);
@@ -235,7 +358,7 @@ function SalesPage() {
                       <FormControl>
                         <SelectTrigger className="h-11 rounded-xl">
                           <SelectValue
-                            placeholder={carsLoading ? "Loading cars..." : "Select a car to sell"}
+                            placeholder={carsLoading ? t.loadingCars : t.selectCarPlaceholder}
                           />
                         </SelectTrigger>
                       </FormControl>
@@ -247,7 +370,7 @@ function SalesPage() {
                         ))}
                         {cars.length === 0 && !carsLoading && (
                           <div className="px-4 py-2 text-sm text-muted-foreground">
-                            No available cars found
+                            {t.noCarsFound}
                           </div>
                         )}
                       </SelectContent>
@@ -261,26 +384,26 @@ function SalesPage() {
                 <div className="mt-4 rounded-lg border p-4">
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div>
-                      <p className="text-sm text-muted-foreground">Car</p>
+                      <p className="text-sm text-muted-foreground">{t.carLabel}</p>
                       <p className="font-medium">
                         {selectedCar.company} {selectedCar.model}
                         {selectedCar.variant && ` (${selectedCar.variant})`}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Year</p>
+                      <p className="text-sm text-muted-foreground">{t.yearLabel}</p>
                       <p className="font-medium">{selectedCar.year}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Registration</p>
+                      <p className="text-sm text-muted-foreground">{t.registrationLabel}</p>
                       <p className="font-medium">
                         {selectedCar.carType === "CP (Custom Paid)"
                           ? selectedCar.registrationNumber
-                          : selectedCar.localNumber || "N/A"}
+                          : selectedCar.localNumber || t.na}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Sale Price</p>
+                      <p className="text-sm text-muted-foreground">{t.salePriceLabel}</p>
                       <p className="font-medium text-green-600">
                         {formatPKR(selectedCar.salePrice)}
                       </p>
@@ -295,7 +418,7 @@ function SalesPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <User className="h-5 w-5" />
-                Buyer Information
+                {t.buyerInfoTitle}
               </CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4 sm:grid-cols-2">
@@ -304,12 +427,13 @@ function SalesPage() {
                 name="buyerName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Buyer Name</FormLabel>
+                    <FormLabel>{t.buyerName}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter buyer name"
+                        placeholder={t.buyerNamePlaceholder}
                         {...field}
-                        className="h-11 rounded-xl"
+                        dir={textFieldDir}
+                        className={cn("h-11 rounded-xl", textFieldAlign)}
                         disabled={saleCompleted}
                       />
                     </FormControl>
@@ -322,12 +446,13 @@ function SalesPage() {
                 name="fatherName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Father's Name</FormLabel>
+                    <FormLabel>{t.fatherName}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter father's name"
+                        placeholder={t.fatherNamePlaceholder}
                         {...field}
-                        className="h-11 rounded-xl"
+                        dir={textFieldDir}
+                        className={cn("h-11 rounded-xl", textFieldAlign)}
                         disabled={saleCompleted}
                       />
                     </FormControl>
@@ -340,12 +465,13 @@ function SalesPage() {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
+                    <FormLabel>{t.phone}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="0300-1234567"
+                        placeholder={t.phonePlaceholder}
                         {...field}
-                        className="h-11 rounded-xl"
+                        dir="ltr"
+                        className="h-11 rounded-xl text-left"
                         disabled={saleCompleted}
                       />
                     </FormControl>
@@ -358,12 +484,13 @@ function SalesPage() {
                 name="cnic"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>CNIC Number</FormLabel>
+                    <FormLabel>{t.cnic}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="1234567890123"
+                        placeholder={t.cnicPlaceholder}
                         {...field}
-                        className="h-11 rounded-xl"
+                        dir="ltr"
+                        className="h-11 rounded-xl text-left"
                         disabled={saleCompleted}
                       />
                     </FormControl>
@@ -376,12 +503,13 @@ function SalesPage() {
                 name="address"
                 render={({ field }) => (
                   <FormItem className="sm:col-span-2">
-                    <FormLabel>Full Address</FormLabel>
+                    <FormLabel>{t.address}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter complete address"
+                        placeholder={t.addressPlaceholder}
                         {...field}
-                        className="h-11 rounded-xl"
+                        dir={textFieldDir}
+                        className={cn("h-11 rounded-xl", textFieldAlign)}
                         disabled={saleCompleted}
                       />
                     </FormControl>
@@ -396,7 +524,7 @@ function SalesPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <CreditCard className="h-5 w-5" />
-                Payment Details
+                {t.paymentTitle}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -405,7 +533,7 @@ function SalesPage() {
                 name="paymentType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Payment Type</FormLabel>
+                    <FormLabel>{t.paymentType}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
@@ -413,12 +541,12 @@ function SalesPage() {
                     >
                       <FormControl>
                         <SelectTrigger className="h-11 rounded-xl">
-                          <SelectValue placeholder="Select payment type" />
+                          <SelectValue placeholder={t.paymentTypePlaceholder} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Full Payment">Full Payment</SelectItem>
-                        <SelectItem value="Instalment">Instalment</SelectItem>
+                        <SelectItem value="Full Payment">{t.fullPayment}</SelectItem>
+                        <SelectItem value="Instalment">{t.instalment}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -433,13 +561,14 @@ function SalesPage() {
                     name="fullPaymentAmount"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Payment Amount</FormLabel>
+                        <FormLabel>{t.paymentAmount}</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
-                            placeholder="Enter full payment amount"
+                            placeholder={t.paymentAmountPlaceholder}
                             {...field}
-                            className="h-11 rounded-xl"
+                            dir="ltr"
+                            className="h-11 rounded-xl text-left"
                             value={field.value || selectedCar?.salePrice || ""}
                             disabled={saleCompleted}
                           />
@@ -450,7 +579,7 @@ function SalesPage() {
                   />
                   <div className="flex items-end">
                     <div className="w-full rounded-lg bg-muted p-3">
-                      <p className="text-sm text-muted-foreground">Total Price</p>
+                      <p className="text-sm text-muted-foreground">{t.totalPrice}</p>
                       <p className="font-semibold">{formatPKR(selectedCar?.salePrice || 0)}</p>
                     </div>
                   </div>
@@ -462,13 +591,14 @@ function SalesPage() {
                     name="advancePayment"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Advance Payment</FormLabel>
+                        <FormLabel>{t.advancePayment}</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
-                            placeholder="Enter advance payment"
+                            placeholder={t.advancePaymentPlaceholder}
                             {...field}
-                            className="h-11 rounded-xl"
+                            dir="ltr"
+                            className="h-11 rounded-xl text-left"
                             disabled={saleCompleted}
                           />
                         </FormControl>
@@ -481,7 +611,7 @@ function SalesPage() {
                     name="instalmentDate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Next Instalment Date</FormLabel>
+                        <FormLabel>{t.nextInstalmentDate}</FormLabel>
                         <FormControl>
                           <Input
                             type="date"
@@ -508,17 +638,17 @@ function SalesPage() {
             {loading ? (
               <>
                 <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                Processing...
+                {t.processing}
               </>
             ) : saleCompleted ? (
               <>
                 <CheckCircle2 className="h-5 w-5 mr-2" />
-                Sale Completed - Redirecting to Invoice...
+                {t.completedRedirecting}
               </>
             ) : (
               <>
                 <DollarSign className="h-5 w-5 mr-2" />
-                Complete Sale
+                {t.completeSale}
               </>
             )}
           </Button>
