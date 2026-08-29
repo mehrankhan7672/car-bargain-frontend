@@ -37,7 +37,7 @@ import { carService } from "@/services/carService";
 import { saleService } from "@/services/saleService";
 import { getImageUrl } from "@/lib/image-url";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { CustomInvoice } from "@/components/shared/CustomInvoice";
 // Dialog & form for payments
 import {
   Dialog,
@@ -169,7 +169,15 @@ const FIELDS = {
 };
 
 // Overlay field component
-const F = ({ pos, value, ltr = false }: { pos: FieldPos; value?: string | null; ltr?: boolean }) => {
+const F = ({
+  pos,
+  value,
+  ltr = false,
+}: {
+  pos: FieldPos;
+  value?: string | null;
+  ltr?: boolean;
+}) => {
   if (value === undefined || value === null || value === "") return null;
   return (
     <span
@@ -374,7 +382,7 @@ function ViewCar() {
   };
 
   // Get the sale to display in invoice (use the first sale, or fallback to car.sale)
-  const invoiceSale = sales.length > 0 ? sales[0] : (car.sale || null);
+  const invoiceSale = sales.length > 0 ? sales[0] : car.sale || null;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8">
@@ -778,7 +786,9 @@ function ViewCar() {
                                     Remaining Due:
                                   </dt>
                                   <dd className="font-bold text-primary">
-                                    {remainingDue <= 0 ? "Paid in Full ✅" : formatPKR(remainingDue)}
+                                    {remainingDue <= 0
+                                      ? "Paid in Full ✅"
+                                      : formatPKR(remainingDue)}
                                   </dd>
                                 </div>
                               </dl>
@@ -1031,7 +1041,7 @@ function ViewCar() {
         {/* ===== NEW INVOICE TAB – with overlay form and store info ===== */}
         <TabsContent value="invoice">
           {!invoiceSale ? (
-            <div className="card-soft">
+            <div className="card-soft no-print">
               <EmptyState
                 title="No sale record found"
                 description="This car hasn't been sold yet. Complete a sale to generate an invoice."
@@ -1046,148 +1056,45 @@ function ViewCar() {
               />
             </div>
           ) : (
-            <div className="mx-auto max-w-3xl">
-              {/* Action Buttons */}
-              <div className="mb-4 flex justify-end gap-2 print:hidden">
-                <Button
-                  variant="outline"
-                  className="rounded-xl"
-                  onClick={() => window.print()}
-                >
+            <div className="mx-auto max-w-3xl print-only" id="invoice-print-area">
+              {/* Print button – hidden during print */}
+              <div className="mb-4 flex justify-end gap-2 print:hidden no-print">
+                <Button variant="outline" className="rounded-xl" onClick={() => window.print()}>
                   <Printer className="h-4 w-4 mr-2" />
                   Print Invoice
                 </Button>
               </div>
 
-              {/* Invoice Card with store logo and car image */}
+              {/* Custom Invoice Component */}
               <div className="card-soft overflow-hidden rounded-2xl border border-border/50">
-                {/* Store Header */}
-                <div className="flex items-center gap-4 border-b border-border/50 bg-muted/30 px-6 py-4">
-                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
-                    {/* Replace with your store logo */}
-                    <img
-                      src="/store-logo.png"
-                      alt="Store Logo"
-                      className="h-full w-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = "/placeholder-store.png";
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold">Car Bargain Manager</h3>
-                    <p className="text-sm text-muted-foreground">Sale Agreement – Invoice</p>
-                  </div>
-                </div>
-
-                {/* Car Image (if available) */}
-                {car.images && car.images.length > 0 && (
-                  <div className="relative h-48 w-full overflow-hidden bg-muted/30">
-                    <img
-                      src={getImageUrl(car.images[0])}
-                      alt={`${car.company} ${car.model}`}
-                      className="h-full w-full object-contain"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = "/placeholder-car.jpg";
-                      }}
-                    />
-                  </div>
-                )}
-
-                {/* Overlay Form */}
-                <div className="relative w-full" style={{ aspectRatio: "517 / 744" }}>
-                  <img
-                    src={formTemplate}
-                    alt="Sale agreement form"
-                    className="absolute inset-0 h-full w-full select-none"
-                    draggable={false}
-                  />
-
-                  {/* Populate fields from the sale */}
-                  <F pos={FIELDS.date} value={formatInvoiceDate(invoiceSale.saleDate)} ltr />
-
-                  <F
-                    pos={FIELDS.sellerName}
-                    value={invoiceSale.sellerSnapshot?.name || car.userName}
-                  />
-                  <F
-                    pos={FIELDS.sellerAddress}
-                    value={invoiceSale.sellerSnapshot?.address || car.userAddress}
-                  />
-
-                  <F pos={FIELDS.buyerName} value={invoiceSale.buyerName} />
-                  <F pos={FIELDS.buyerFather} value={invoiceSale.buyerFatherName} />
-                  <F pos={FIELDS.buyerAddress} value={invoiceSale.buyerAddress} />
-
-                  <F pos={FIELDS.carCompany} value={car.company} />
-                  <F
-                    pos={FIELDS.carRegNumber}
-                    value={isRegisteredCar ? car.registrationNumber : car.localNumber}
-                    ltr
-                  />
-                  <F pos={FIELDS.carModel} value={String(car.year)} ltr />
-                  <F pos={FIELDS.carEngineNumber} value={car.engineNumber} ltr />
-
-                  <F pos={FIELDS.carChassisNumber} value={car.chassisNumber} ltr />
-                  <F pos={FIELDS.carColor} value={car.color} />
-                  <F pos={FIELDS.carEngineCC} value={car.engineCC ? `${car.engineCC}` : ""} ltr />
-
-                  <F pos={FIELDS.totalPrice} value={formatPKR(car.salePrice)} ltr />
-                  <F pos={FIELDS.halfPrice} value={formatPKR(car.salePrice / 2)} ltr />
-
-                  {/* Determine amount received */}
-                  {(() => {
-                    const isFull = invoiceSale.paymentType === "Full Payment";
-                    const amountReceived = isFull
-                      ? invoiceSale.fullPaymentAmount || car.salePrice
-                      : invoiceSale.advancePayment || 0;
-                    const remaining = isFull
-                      ? null
-                      : Math.max(car.salePrice - amountReceived, 0);
-                    return (
-                      <>
-                        <F pos={FIELDS.amountReceived} value={formatPKR(amountReceived)} ltr />
-                        <F
-                          pos={FIELDS.remaining}
-                          value={remaining === null ? "-" : formatPKR(remaining)}
-                          ltr
-                        />
-                      </>
-                    );
-                  })()}
-
-                  {/* Instalment deadline fields */}
-                  {invoiceSale.paymentType === "Instalment" && invoiceSale.instalmentDate ? (
-                    <>
-                      <F
-                        pos={FIELDS.deadlineDate}
-                        value={formatInvoiceDate(invoiceSale.instalmentDate)}
-                        ltr
-                      />
-                      <F
-                        pos={FIELDS.deadlineDuration}
-                        value={monthsAndDaysUntil(invoiceSale.instalmentDate)}
-                        ltr
-                      />
-                      <F
-                        pos={FIELDS.monthlyInstalment}
-                        value={invoiceSale.monthlyInstalment ? String(invoiceSale.monthlyInstalment) : "0"}
-                        ltr
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <F pos={FIELDS.deadlineDate} value="-" ltr />
-                      <F pos={FIELDS.deadlineDuration} value="-" ltr />
-                      <F pos={FIELDS.monthlyInstalment} value="-" ltr />
-                    </>
-                  )}
-                </div>
-
-                {/* Footer */}
-                <div className="border-t border-border/50 bg-muted/30 px-6 py-3 text-center text-sm text-muted-foreground">
-                  Generated on {new Date().toLocaleString()}
-                </div>
+                <CustomInvoice
+                  data={{
+                    sale: invoiceSale,
+                    car: car,
+                    buyer: {
+                      name: invoiceSale.buyerName,
+                      fatherName: invoiceSale.buyerFatherName,
+                      address: invoiceSale.buyerAddress,
+                      phone: invoiceSale.buyerPhone,
+                      cnic: invoiceSale.buyerCnic,
+                    },
+                    seller: {
+                      name: invoiceSale.sellerSnapshot?.name || car.userName,
+                      phone: invoiceSale.sellerSnapshot?.phone || car.userPhone,
+                      cnic: invoiceSale.sellerSnapshot?.cnic || car.userCnic,
+                      address: invoiceSale.sellerSnapshot?.address || car.userAddress,
+                    },
+                    payment: {
+                      type: invoiceSale.paymentType,
+                      fullPaymentAmount: invoiceSale.fullPaymentAmount,
+                      advancePayment: invoiceSale.advancePayment,
+                      instalmentDate: invoiceSale.instalmentDate,
+                      monthlyInstalment: invoiceSale.monthlyInstalment,
+                    },
+                    saleDate: invoiceSale.saleDate,
+                    invoiceNumber: `INV-${invoiceSale._id?.slice(-6)}`,
+                  }}
+                />
               </div>
             </div>
           )}
