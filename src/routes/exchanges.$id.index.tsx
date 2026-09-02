@@ -1,5 +1,5 @@
-// src/routes/exchanges/$id/index.tsx (full updated with improved buttons)
-import { useEffect, useState } from "react";
+// src/routes/exchanges/$id/index.tsx
+import { useEffect, useState, useMemo } from "react";
 import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-router";
 import {
   ArrowLeft,
@@ -12,6 +12,12 @@ import {
   ArrowRight,
   DollarSign,
   Printer,
+  Receipt,
+  Calendar,
+  X,
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -20,8 +26,8 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { DetailCard, DetailRow } from "@/components/shared/DetailCard";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { PrintableDocument } from "@/components/shared/PrintableDocument";
 import { exchangeService } from "@/services/exchangeService";
+import { ExchangeReceipt } from "@/components/shared/ExchangeReceipt";
 import { formatPKR } from "@/data/dummy";
 import {
   Dialog,
@@ -40,6 +46,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/exchanges/$id/")({
   head: () => ({
@@ -64,6 +71,7 @@ function PersonCard({
   icon: Icon,
   label,
   name,
+  fatherName,
   cnic,
   phone,
   address,
@@ -72,6 +80,7 @@ function PersonCard({
   icon: typeof User;
   label: string;
   name?: string;
+  fatherName?: string;
   cnic?: string;
   phone?: string;
   address?: string;
@@ -95,6 +104,7 @@ function PersonCard({
         <p className="text-xs font-bold uppercase tracking-wide opacity-80">{label}</p>
       </div>
       <p className="text-lg font-bold leading-tight">{name || "—"}</p>
+      {fatherName && <p className="text-sm opacity-80">S/O {fatherName}</p>}
       <div className="mt-2 space-y-0.5 text-sm opacity-90">
         {cnic && <p>CNIC: {cnic}</p>}
         {phone && <p>Phone: {phone}</p>}
@@ -138,17 +148,56 @@ function VehicleSummary({
   );
 }
 
+// Small helper for the sortable column header used in the payment table
+function SortableHeader({
+  label,
+  active,
+  onClick,
+  align = "left",
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  align?: "left" | "right";
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-white/90 hover:text-white transition-colors ${
+        align === "right" ? "ml-auto flex-row-reverse" : ""
+      }`}
+    >
+      {label}
+      <ArrowUpDown className={`h-3 w-3 ${active ? "opacity-100" : "opacity-50"}`} />
+    </button>
+  );
+}
+
 function ViewExchange() {
   const { id } = useParams({ from: "/exchanges/$id/" });
   const navigate = useNavigate();
   const [ex, setEx] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [payments, setPayments] = useState<any[]>([]);
+  const [paymentsLoading, setPaymentsLoading] = useState(true);
+  const [filterMonth, setFilterMonth] = useState<string>(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  });
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
   const [paymentDate, setPaymentDate] = useState<string>(new Date().toISOString().split("T")[0]);
   const [paymentMethod, setPaymentMethod] = useState<string>("Cash");
   const [paymentNotes, setPaymentNotes] = useState<string>("");
   const [recording, setRecording] = useState(false);
+
+  // Sorting + pagination state for the Payment History table
+  const [sortField, setSortField] = useState<"date" | "amount">("date");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const fetchExchange = async () => {
     setLoading(true);
@@ -163,9 +212,96 @@ function ViewExchange() {
     }
   };
 
+  const fetchPayments = async () => {
+    setPaymentsLoading(true);
+    try {
+      const res = await exchangeService.getPayments(id);
+      setPayments(res?.data || []);
+    } catch (err) {
+      console.error("Failed to load payment history:", err);
+      toast.error("Failed to load payment history");
+    } finally {
+      setPaymentsLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchExchange();
+    fetchPayments();
   }, [id]);
+
+  // Describe a single payment transaction for display
+  const describePayment = (p: any) => {
+    if (p.direction === "customer_to_showroom") {
+      return { from: customerOwner.name || "Customer", to: showroomOwner.name || "Showroom" };
+    }
+    return { from: showroomOwner.name || "Showroom", to: customerOwner.name || "Customer" };
+  };
+
+  // Filter payments by month & search
+  const filteredPayments = useMemo(() => {
+    let result = payments;
+    // Month filter
+    if (filterMonth) {
+      result = result.filter((p) => {
+        if (!p.date) return false;
+        const d = new Date(p.date);
+        const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+        return month === filterMonth;
+      });
+    }
+    // Search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      result = result.filter((p) => {
+        const { from, to } = describePayment(p);
+        return (
+          from?.toLowerCase().includes(query) ||
+          to?.toLowerCase().includes(query) ||
+          (p.method || "").toLowerCase().includes(query) ||
+          (p.notes || "").toLowerCase().includes(query) ||
+          (p.recordedBy?.name || "").toLowerCase().includes(query)
+        );
+      });
+    }
+    return result;
+  }, [payments, filterMonth, searchQuery]);
+
+  // Sort the filtered payments by the active column
+  const sortedPayments = useMemo(() => {
+    const list = [...filteredPayments];
+    list.sort((a, b) => {
+      let cmp = 0;
+      if (sortField === "date") {
+        cmp = new Date(a.date).getTime() - new Date(b.date).getTime();
+      } else {
+        cmp = (a.amount || 0) - (b.amount || 0);
+      }
+      return sortDirection === "asc" ? cmp : -cmp;
+    });
+    return list;
+  }, [filteredPayments, sortField, sortDirection]);
+
+  // Paginate the sorted list
+  const totalPages = Math.max(1, Math.ceil(sortedPayments.length / rowsPerPage));
+  const paginatedPayments = useMemo(() => {
+    const start = (currentPage - 1) * rowsPerPage;
+    return sortedPayments.slice(start, start + rowsPerPage);
+  }, [sortedPayments, currentPage, rowsPerPage]);
+
+  // Reset to page 1 whenever filters, sorting, or page size change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterMonth, searchQuery, rowsPerPage, sortField, sortDirection]);
+
+  const toggleSort = (field: "date" | "amount") => {
+    if (sortField === field) {
+      setSortDirection((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDirection("desc");
+    }
+  };
 
   if (loading) return null;
   if (!ex)
@@ -242,6 +378,7 @@ function ViewExchange() {
       setPaymentMethod("Cash");
       setPaymentNotes("");
       await fetchExchange();
+      await fetchPayments();
     } catch (error: any) {
       console.error("Record payment error:", error);
       toast.error(error?.response?.data?.message || "Failed to record payment");
@@ -250,14 +387,48 @@ function ViewExchange() {
     }
   };
 
+  // Helper to format date nicely
+  const formatPaymentDate = (date: string) => {
+    if (!date) return "—";
+    return new Date(date).toLocaleDateString("en-PK", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const formatPaymentTime = (date: string) => {
+    if (!date) return "";
+    return new Date(date).toLocaleTimeString("en-PK", {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  };
+
+  // Total of filtered payments (all pages, not just the current page)
+  const totalFiltered = filteredPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
+
+  // Method badge tone
+  const methodBadgeClasses = (method: string) => {
+    switch ((method || "Cash").toLowerCase()) {
+      case "bank transfer":
+        return "bg-blue-50 text-blue-700 border-blue-200";
+      case "cheque":
+        return "bg-amber-50 text-amber-700 border-amber-200";
+      case "mobile wallet":
+        return "bg-violet-50 text-violet-700 border-violet-200";
+      default:
+        return "bg-emerald-50 text-emerald-700 border-emerald-200";
+    }
+  };
+
   return (
-    <div className="mx-auto w-full max-w-5xl">
+    <div className="mx-auto w-full max-w-7xl">
       <PageHeader
         title={`Exchange ${ex.dealNumber}`}
         subtitle={`${customerOwner.name || ""} · ${dateStr}`}
         actions={
           <>
-            {/* 👇 Print Receipt button – amber outline, visible */}
             <Button
               variant="outline"
               className="rounded-xl border-2 border-amber-500 bg-amber-50 text-amber-700 hover:bg-amber-100 hover:text-amber-800 dark:border-amber-400 dark:bg-amber-950/30 dark:text-amber-300 dark:hover:bg-amber-950/50"
@@ -314,6 +485,7 @@ function ViewExchange() {
                 icon={partyAIcon}
                 label={partyALabel}
                 name={showroomOwner.name}
+                fatherName={showroomOwner.fatherName}
                 cnic={showroomOwner.cnic}
                 phone={showroomOwner.phone}
                 address={showroomOwner.address}
@@ -346,9 +518,15 @@ function ViewExchange() {
                 <DetailRow label="Local Number" value={ex.showroomCar?.localNumber || "—"} />
               )}
               <DetailRow label="Chassis Number" value={ex.showroomCar?.chassisNumber || "—"} />
+              <DetailRow label="Engine Number" value={ex.showroomCar?.engineNumber || "—"} />
               <DetailRow
                 label="Mileage"
                 value={ex.showroomCar?.mileage ? `${ex.showroomCar.mileage} km` : "—"}
+              />
+              <DetailRow label="Color" value={ex.showroomCar?.color || "—"} />
+              <DetailRow
+                label="Power (CC)"
+                value={ex.showroomCar?.powerCC || ex.showroomCar?.engineCC || "—"}
               />
               <DetailRow label="Condition" value={ex.showroomCar?.condition || "—"} />
               <DetailRow label="Actual Value" value={formatPKR(ex.showroomCar?.actualValue)} />
@@ -365,6 +543,7 @@ function ViewExchange() {
                 icon={User}
                 label={partyBLabel}
                 name={customerOwner.name}
+                fatherName={customerOwner.fatherName}
                 cnic={customerOwner.cnic}
                 phone={customerOwner.phone}
                 address={customerOwner.address}
@@ -396,9 +575,15 @@ function ViewExchange() {
                 <DetailRow label="Local Number" value={ex.customerCar?.localNumber || "—"} />
               )}
               <DetailRow label="Chassis Number" value={ex.customerCar?.chassisNumber || "—"} />
+              <DetailRow label="Engine Number" value={ex.customerCar?.engineNumber || "—"} />
               <DetailRow
                 label="Mileage"
                 value={ex.customerCar?.mileage ? `${ex.customerCar.mileage} km` : "—"}
+              />
+              <DetailRow label="Color" value={ex.customerCar?.color || "—"} />
+              <DetailRow
+                label="Power (CC)"
+                value={ex.customerCar?.powerCC || ex.customerCar?.engineCC || "—"}
               />
               <DetailRow label="Condition" value={ex.customerCar?.condition || "—"} />
             </div>
@@ -512,6 +697,243 @@ function ViewExchange() {
             </div>
           </DetailCard>
 
+          {/* ================================================================ */}
+          {/* PAYMENT HISTORY – ONE UNIFIED CARD                                */}
+          {/* (filters, table, pagination, and totals all inside one border)    */}
+          {/* ================================================================ */}
+          <DetailCard title="Payment History">
+            <div className="overflow-hidden rounded-2xl border border-border shadow-sm">
+              {paymentsLoading ? (
+                <div className="flex justify-center py-10">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                    Loading payments...
+                  </div>
+                </div>
+              ) : payments.length === 0 ? (
+                <div className="flex flex-col items-center gap-3 py-10 text-center text-sm text-muted-foreground">
+                  <Receipt className="h-10 w-10 opacity-20" />
+                  <p>No payments recorded for this exchange yet.</p>
+                </div>
+              ) : (
+                <>
+                  {/* Toolbar strip */}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-border bg-muted/20 px-5 py-3.5">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-medium text-muted-foreground">Month:</span>
+                      <Input
+                        type="month"
+                        value={filterMonth}
+                        onChange={(e) => setFilterMonth(e.target.value)}
+                        className="w-40 h-9 bg-background"
+                      />
+                      {filterMonth && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 text-muted-foreground hover:text-foreground"
+                          onClick={() => {
+                            const now = new Date();
+                            setFilterMonth(
+                              `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`
+                            );
+                          }}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                      <Input
+                        placeholder="Search payments..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full sm:w-48 h-9 bg-background"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-9 bg-background"
+                        onClick={() => {
+                          const now = new Date();
+                          setFilterMonth(
+                            `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`
+                          );
+                          setSearchQuery("");
+                        }}
+                      >
+                        <Calendar className="h-4 w-4 mr-1" />
+                        This Month
+                      </Button>
+                    </div>
+                  </div>
+
+                  {filteredPayments.length === 0 ? (
+                    <div className="py-10 text-center text-sm text-muted-foreground">
+                      No payments match your filters.
+                    </div>
+                  ) : (
+                    <>
+                      {/* Table */}
+                      <div className="overflow-x-auto">
+                        <table className="w-full border-collapse">
+                          <thead>
+                            <tr className="bg-gradient-to-r from-slate-600 to-slate-500 dark:from-slate-800 dark:to-slate-700">
+                              <th className="px-5 py-3.5 text-left">
+                                <SortableHeader
+                                  label="Date"
+                                  active={sortField === "date"}
+                                  onClick={() => toggleSort("date")}
+                                />
+                              </th>
+                              <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-white/90">
+                                Paid By
+                              </th>
+                              <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-white/90">
+                                Paid To
+                              </th>
+                              <th className="px-5 py-3.5 text-right">
+                                <SortableHeader
+                                  label="Amount"
+                                  active={sortField === "amount"}
+                                  onClick={() => toggleSort("amount")}
+                                  align="right"
+                                />
+                              </th>
+                              <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-white/90">
+                                Method
+                              </th>
+                              <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-white/90">
+                                Notes
+                              </th>
+                              <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-white/90">
+                                Recorded By
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border bg-card">
+                            {paginatedPayments.map((p) => {
+                              const { from, to } = describePayment(p);
+                              return (
+                                <tr key={p._id} className="transition-colors hover:bg-muted/30">
+                                  <td className="px-5 py-4 align-top">
+                                    <p className="font-semibold leading-tight">
+                                      {formatPaymentDate(p.date)}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                      {formatPaymentTime(p.date)}
+                                    </p>
+                                  </td>
+                                  <td className="px-5 py-4 align-top">
+                                    <p className="font-semibold leading-tight">{from}</p>
+                                  </td>
+                                  <td className="px-5 py-4 align-top">
+                                    <p className="font-semibold leading-tight">{to}</p>
+                                  </td>
+                                  <td className="px-5 py-4 text-right align-top">
+                                    <span className="font-display font-bold text-emerald-600 dark:text-emerald-400">
+                                      {formatPKR(p.amount)}
+                                    </span>
+                                  </td>
+                                  <td className="px-5 py-4 align-top">
+                                    <Badge
+                                      variant="outline"
+                                      className={`rounded-full border px-2.5 py-0.5 font-medium ${methodBadgeClasses(
+                                        p.method
+                                      )}`}
+                                    >
+                                      {p.method || "Cash"}
+                                    </Badge>
+                                  </td>
+                                  <td className="px-5 py-4 align-top text-muted-foreground">
+                                    {p.notes || "—"}
+                                  </td>
+                                  <td className="px-5 py-4 align-top text-muted-foreground">
+                                    {p.recordedBy?.name || "—"}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* Pagination strip */}
+                      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border bg-muted/20 px-5 py-3 text-sm text-muted-foreground">
+                        <span>
+                          {sortedPayments.length === 0
+                            ? "0 of 0"
+                            : `${(currentPage - 1) * rowsPerPage + 1}-${Math.min(
+                                currentPage * rowsPerPage,
+                                sortedPayments.length
+                              )} of ${sortedPayments.length}`}
+                        </span>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2">
+                            <span>Rows per page:</span>
+                            <Select
+                              value={String(rowsPerPage)}
+                              onValueChange={(v) => setRowsPerPage(Number(v))}
+                            >
+                              <SelectTrigger className="h-8 w-[70px] bg-background">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="10">10</SelectItem>
+                                <SelectItem value="25">25</SelectItem>
+                                <SelectItem value="50">50</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span className="mr-1">
+                              {currentPage}/{totalPages}
+                            </span>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8 rounded-full bg-background"
+                              disabled={currentPage <= 1}
+                              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                            >
+                              <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8 rounded-full bg-background"
+                              disabled={currentPage >= totalPages}
+                              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                            >
+                              <ChevronRight className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Totals strip — same card, top border to separate from pagination */}
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-t border-border px-5 py-3 text-sm">
+                        <span className="text-muted-foreground">
+                          Showing <strong className="text-foreground">{filteredPayments.length}</strong> transaction
+                          {filteredPayments.length !== 1 && "s"}
+                          {filterMonth &&
+                            ` for ${new Date(filterMonth + "-01").toLocaleDateString("en-PK", {
+                              month: "long",
+                              year: "numeric",
+                            })}`}
+                          {searchQuery && ` matching "${searchQuery}"`}
+                        </span>
+                        <span className="text-muted-foreground">
+                          Total: <strong className="text-primary">{formatPKR(totalFiltered)}</strong>
+                        </span>
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          </DetailCard>
+
           {/* Adjustments */}
           {ex.adjustments?.length > 0 && (
             <DetailCard title="Adjustments">
@@ -530,79 +952,16 @@ function ViewExchange() {
         </TabsContent>
 
         <TabsContent value="invoice">
-          <PrintableDocument
-            docType="Exchange Invoice"
-            docNo={ex.dealNumber}
-            date={dateStr}
-            customer={[
-              { label: "Name", value: customerOwner.name || "—" },
-              { label: "CNIC", value: customerOwner.cnic || "—" },
-              { label: "Phone", value: customerOwner.phone || "—" },
-              { label: "Address", value: customerOwner.address || "—" },
-            ]}
-            details={[
-              {
-                label: isStockSource ? "Dealer" : "Customer 1",
-                value: `${showroomOwner.name || "—"}${showroomOwner.cnic ? ` (CNIC: ${showroomOwner.cnic})` : ""}`,
-              },
-              {
-                label: `${isStockSource ? "Showroom Vehicle (from stock)" : "Customer 1 Vehicle (manual)"}`,
-                value: `${ex.showroomCar?.company} ${ex.showroomCar?.model} ${ex.showroomCar?.year || ""} — ${formatPKR(ex.showroomCar?.value)}`,
-              },
-              {
-                label: "Customer Vehicle",
-                value: `${ex.customerCar?.company} ${ex.customerCar?.model} ${ex.customerCar?.year || ""} — ${formatPKR(ex.customerCar?.value)}`,
-              },
-              { label: "Exchange Type", value: ex.exchangeType },
-              { label: "Difference (D)", value: formatPKR(ex.difference) },
-              { label: "Settlement Amount", value: formatPKR(ex.settlementAmount) },
-              { label: "Adjustments", value: formatPKR(ex.adjustmentTotal) },
-              ...(ex.finalDirection !== "none"
-                ? [
-                    {
-                      label: "Payment Flow",
-                      value: `${payerName || "—"}${payerCnic ? ` (${payerCnic})` : ""} → ${payeeName || "—"}${payeeCnic ? ` (${payeeCnic})` : ""}`,
-                    },
-                  ]
-                : []),
-            ]}
-            amountLabel={
-              ex.finalDirection === "customer_pays_showroom"
-                ? `${customerOwner.name || "Customer"} Pays ${showroomOwner.name || "Showroom"}`
-                : ex.finalDirection === "showroom_pays_customer"
-                  ? `${showroomOwner.name || "Showroom"} Pays ${customerOwner.name || "Customer"}`
-                  : "Final Amount"
-            }
-            amount={ex.finalAmount}
-            extraLines={
-              <>
-                {customerPaysShowroom && (
-                  <>
-                    <div className="flex justify-between border-t border-border pt-2 text-sm">
-                      <span>Received from {customerOwner.name || "Customer"}</span>
-                      <span>{formatPKR(amountReceived)}</span>
-                    </div>
-                    <div className="flex justify-between text-sm font-semibold text-destructive">
-                      <span>Still Due from {customerOwner.name || "Customer"}</span>
-                      <span>{formatPKR(dueAmount)}</span>
-                    </div>
-                  </>
-                )}
-                {showroomPaysCustomer && (
-                  <>
-                    <div className="flex justify-between border-t border-border pt-2 text-sm">
-                      <span>Paid to {customerOwner.name || "Customer"}</span>
-                      <span>{formatPKR(amountPaid)}</span>
-                    </div>
-                    <div className="flex justify-between text-sm font-semibold text-destructive">
-                      <span>Still Due to {customerOwner.name || "Customer"}</span>
-                      <span>{formatPKR(dueFromShowroom)}</span>
-                    </div>
-                  </>
-                )}
-              </>
-            }
-            footerNote="Both parties agree to this exchange. Vehicle papers handed over after full payment."
+          <ExchangeReceipt
+            ex={ex}
+            showroomOwner={showroomOwner}
+            customerOwner={customerOwner}
+            isStockSource={isStockSource}
+            dateStr={dateStr}
+            payerName={payerName}
+            payerCnic={payerCnic}
+            payeeName={payeeName}
+            payeeCnic={payeeCnic}
           />
         </TabsContent>
       </Tabs>
@@ -687,7 +1046,6 @@ function ViewExchange() {
             >
               Cancel
             </Button>
-            {/* 👇 Record Payment button – black background, white text, shadow */}
             <Button
               onClick={handleRecordPayment}
               disabled={recording || paymentAmount <= 0 || paymentAmount > due || !paymentDate}

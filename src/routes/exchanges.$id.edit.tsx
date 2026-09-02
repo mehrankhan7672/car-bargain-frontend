@@ -1,3 +1,4 @@
+// src/routes/exchanges/$id/edit.tsx
 import { useEffect, useState } from "react";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -40,9 +41,7 @@ function EditExchange() {
   if (loading) return null;
   if (!ex) return <EmptyState title="Exchange not found" />;
 
-  // Build default values, including all payment and source fields
   const defaultValues: Partial<ExchangeFormValues> = {
-    // Showroom car: preserve source, vehicle fields, and owner (dealer or Customer 1)
     showroomCar: {
       source: ex.showroomCar?.source || "stock",
       carId: ex.showroomCar?.carId?._id || ex.showroomCar?.carId || "",
@@ -54,21 +53,23 @@ function EditExchange() {
       registrationCity: ex.showroomCar?.registrationCity || "",
       localNumber: ex.showroomCar?.localNumber || "",
       chassisNumber: ex.showroomCar?.chassisNumber || "",
+      engineNumber: ex.showroomCar?.engineNumber || "",
       mileage: ex.showroomCar?.mileage || "",
       condition: ex.showroomCar?.condition || "Used",
       actualValue: ex.showroomCar?.actualValue || "",
       salePrice: ex.showroomCar?.salePrice || "",
       value: ex.showroomCar?.value || "",
       dealerName: ex.showroomCar?.dealerName || "",
+      color: ex.showroomCar?.color || "",
+      powerCC: ex.showroomCar?.powerCC || ex.showroomCar?.engineCC || "",
       owner: {
         name: ex.showroomCar?.owner?.name || "",
+        fatherName: ex.showroomCar?.owner?.fatherName || "",
         cnic: ex.showroomCar?.owner?.cnic || "",
         phone: ex.showroomCar?.owner?.phone || "",
         address: ex.showroomCar?.owner?.address || "",
       },
     },
-
-    // Customer car: vehicle fields + owner (the customer, or Customer 2 in manual mode)
     customerCar: {
       company: ex.customerCar?.company || "",
       model: ex.customerCar?.model || "",
@@ -78,22 +79,23 @@ function EditExchange() {
       registrationCity: ex.customerCar?.registrationCity || "",
       localNumber: ex.customerCar?.localNumber || "",
       chassisNumber: ex.customerCar?.chassisNumber || "",
+      engineNumber: ex.customerCar?.engineNumber || "",
       mileage: ex.customerCar?.mileage || "",
       condition: ex.customerCar?.condition || "Used",
       actualValue: ex.customerCar?.actualValue || "",
       value: ex.customerCar?.value || "",
+      color: ex.customerCar?.color || "",
+      powerCC: ex.customerCar?.powerCC || ex.customerCar?.engineCC || "",
       owner: {
         name: ex.customerCar?.owner?.name || "",
+        fatherName: ex.customerCar?.owner?.fatherName || "",
         cnic: ex.customerCar?.owner?.cnic || "",
         phone: ex.customerCar?.owner?.phone || "",
         address: ex.customerCar?.owner?.address || "",
       },
     },
-
-    // Payment tracking fields
     amountReceivedFromCustomer: ex.amountReceivedFromCustomer || "",
     amountPaidToCustomer: ex.amountPaidToCustomer || "",
-
     adjustments: ex.adjustments || [],
     notes: ex.notes || "",
     date: ex.date ? new Date(ex.date).toISOString().slice(0, 10) : "",

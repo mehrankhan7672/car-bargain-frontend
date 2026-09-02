@@ -70,7 +70,11 @@ const CarIcon = () => (
 );
 
 // One field: RTL label + dotted fill line
-const Field: React.FC<{ label: string; value?: React.ReactNode; grow?: number }> = ({ label, value, grow = 1 }) => (
+const Field: React.FC<{ label: string; value?: React.ReactNode; grow?: number }> = ({
+  label,
+  value,
+  grow = 1,
+}) => (
   <div className="flex items-baseline gap-1.5 min-w-0" style={{ flex: grow }}>
     <span className="text-[#131b52] font-semibold text-[13.5px] whitespace-nowrap">{label}</span>
     <span className="flex-1 border-b border-dotted border-gray-600 text-center text-[13px] font-medium text-gray-900 min-h-[18px] px-1 truncate">
@@ -80,7 +84,9 @@ const Field: React.FC<{ label: string; value?: React.ReactNode; grow?: number }>
 );
 
 const Row: React.FC<{ children: React.ReactNode; top?: boolean }> = ({ children, top }) => (
-  <div className={`flex items-baseline gap-2 py-2 ${top ? "border-b border-black/70" : "border-b border-dashed border-gray-300"}`}>
+  <div
+    className={`flex items-baseline gap-2 py-2 ${top ? "border-b border-black/70" : "border-b border-dashed border-gray-300"}`}
+  >
     {children}
   </div>
 );
@@ -106,7 +112,10 @@ export const CustomInvoice: React.FC<{ data: InvoiceData }> = ({ data }) => {
 
   const totalPrice = sale.carSnapshot?.salePrice ?? car.salePrice ?? 0;
   const advance = sale.advancePayment ?? payment?.advancePayment ?? 0;
-  const additionalPayments = (sale.payments || []).reduce((sum: number, p: any) => sum + p.amount, 0);
+  const additionalPayments = (sale.payments || []).reduce(
+    (sum: number, p: any) => sum + p.amount,
+    0,
+  );
   const totalReceived = advance + additionalPayments;
   const remaining = Math.max(0, totalPrice - totalReceived);
 
@@ -152,7 +161,10 @@ export const CustomInvoice: React.FC<{ data: InvoiceData }> = ({ data }) => {
           </div>
         </div>
 
-        <div className="text-[#ffd94d] font-bold text-right leading-snug" style={{ fontFamily: "'Noto Nastaliq Urdu',serif" }}>
+        <div
+          className="text-[#ffd94d] font-bold text-right leading-snug"
+          style={{ fontFamily: "'Noto Nastaliq Urdu',serif" }}
+        >
           <div className="text-3xl">بریکوٹ</div>
           <div className="text-2xl">کار زون</div>
         </div>
@@ -229,7 +241,10 @@ export const CustomInvoice: React.FC<{ data: InvoiceData }> = ({ data }) => {
       <div className="grid grid-cols-[170px_1fr] gap-3 px-5 mt-4">
         <div>
           <div className="border border-[#1f2c7a] rounded-lg overflow-hidden">
-            <div className="bg-[#131b52] text-[#ffd94d] text-center text-[15px] py-1.5" style={{ fontFamily: "'Noto Nastaliq Urdu',serif" }}>
+            <div
+              className="bg-[#131b52] text-[#ffd94d] text-center text-[15px] py-1.5"
+              style={{ fontFamily: "'Noto Nastaliq Urdu',serif" }}
+            >
               قیمت کی تفصیل
             </div>
             <div className="flex justify-between px-2.5 py-2 border-b border-dotted border-gray-300 text-[13px]">
@@ -257,7 +272,9 @@ export const CustomInvoice: React.FC<{ data: InvoiceData }> = ({ data }) => {
           <div className="text-[12px] leading-[1.7] text-gray-800">
             {TERMS.map((t, i) => (
               <div key={i} className="mb-1 text-right">
-                <bdi className="text-[#1f2c7a] font-bold font-sans text-[11.5px] ml-1">({i + 1})</bdi>
+                <bdi className="text-[#1f2c7a] font-bold font-sans text-[11.5px] ml-1">
+                  ({i + 1})
+                </bdi>
                 {t}
               </div>
             ))}
@@ -271,7 +288,8 @@ export const CustomInvoice: React.FC<{ data: InvoiceData }> = ({ data }) => {
           className="text-center text-[#c81e1e] font-bold text-[14px] pb-2 mb-3 border-b border-gray-200"
           style={{ fontFamily: "'Noto Nastaliq Urdu',serif" }}
         >
-          مندرجہ بالا شرائط کو خوب پڑھیں، سمجھیں اور درست مان کر دستخط اور انگوٹھے کا نشان لگائیں۔ شکریہ
+          مندرجہ بالا شرائط کو خوب پڑھیں، سمجھیں اور درست مان کر دستخط اور انگوٹھے کا نشان لگائیں۔
+          شکریہ
         </div>
 
         <div className="flex items-baseline justify-between text-[13px] mb-4">
@@ -291,11 +309,16 @@ export const CustomInvoice: React.FC<{ data: InvoiceData }> = ({ data }) => {
 
         {/* Seller party block */}
         <div className="border border-[#1f2c7a] rounded-lg p-3.5 mb-4">
-          <div className="text-center text-[#1f2c7a] text-[16px] mb-3" style={{ fontFamily: "'Noto Nastaliq Urdu',serif" }}>
+          <div
+            className="text-center text-[#1f2c7a] text-[16px] mb-3"
+            style={{ fontFamily: "'Noto Nastaliq Urdu',serif" }}
+          >
             العہد — فروخت کنندہ
           </div>
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-[13px] font-semibold whitespace-nowrap">فروخت کنندہ کا شناختی کارڈ نمبر</span>
+            <span className="text-[13px] font-semibold whitespace-nowrap">
+              فروخت کنندہ کا شناختی کارڈ نمبر
+            </span>
             <div className="flex flex-row-reverse">
               {Array.from({ length: 13 }).map((_, i) => (
                 <div
@@ -318,11 +341,16 @@ export const CustomInvoice: React.FC<{ data: InvoiceData }> = ({ data }) => {
 
         {/* Buyer party block */}
         <div className="border border-[#1f2c7a] rounded-lg p-3.5">
-          <div className="text-center text-[#1f2c7a] text-[16px] mb-3" style={{ fontFamily: "'Noto Nastaliq Urdu',serif" }}>
+          <div
+            className="text-center text-[#1f2c7a] text-[16px] mb-3"
+            style={{ fontFamily: "'Noto Nastaliq Urdu',serif" }}
+          >
             العہد — خریدار
           </div>
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-[13px] font-semibold whitespace-nowrap">خریدار کنندہ کا شناختی کارڈ نمبر</span>
+            <span className="text-[13px] font-semibold whitespace-nowrap">
+              خریدار کنندہ کا شناختی کارڈ نمبر
+            </span>
             <div className="flex flex-row-reverse">
               {Array.from({ length: 13 }).map((_, i) => (
                 <div

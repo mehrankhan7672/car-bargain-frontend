@@ -37,7 +37,10 @@ export const exchangeService = {
     const response = await api.put(`/exchanges/${id}/payment`, data);
     return response.data;
   },
-
+  getPayments: async (id) => {
+    const response = await api.get(`/exchanges/${id}/payments`);
+    return response.data;
+  },
   // Exchange statistics (totals, breakdown by type)
   getStats: async () => {
     const response = await api.get("/exchanges/stats");

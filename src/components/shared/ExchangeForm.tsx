@@ -1,3 +1,4 @@
+// src/components/shared/ExchangeForm.tsx
 import { useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -26,7 +27,13 @@ export type AdjustmentRow = {
 };
 export type CarType = "NCP (Non-Custom Paid)" | "CP (Custom Paid)";
 export type VehicleSource = "stock" | "manual";
-export type OwnerFields = { name: string; cnic: string; phone: string; address: string };
+export type OwnerFields = {
+  name: string;
+  fatherName: string;
+  cnic: string;
+  phone: string;
+  address: string;
+};
 
 export type ExchangeFormValues = {
   showroomCar: {
@@ -40,13 +47,16 @@ export type ExchangeFormValues = {
     registrationCity: string;
     localNumber: string;
     chassisNumber: string;
+    engineNumber: string; // 👈 added
     mileage: number | string;
+    color: string;
+    powerCC: number | string;
     condition: string;
     actualValue: number | string;
     salePrice: number | string;
     value: number | string;
-    dealerName: string; // stock only — display label
-    owner: OwnerFields; // dealer (stock, read-only) OR Customer 1 (manual, editable)
+    dealerName: string;
+    owner: OwnerFields;
   };
   customerCar: {
     company: string;
@@ -57,11 +67,14 @@ export type ExchangeFormValues = {
     registrationCity: string;
     localNumber: string;
     chassisNumber: string;
+    engineNumber: string; // 👈 added
     mileage: number | string;
+    color: string;
+    powerCC: number | string;
     condition: string;
     actualValue: number | string;
     value: number | string;
-    owner: OwnerFields; // the customer, or Customer 2 in manual mode
+    owner: OwnerFields;
   };
   amountReceivedFromCustomer: number | string;
   amountPaidToCustomer: number | string;
@@ -71,7 +84,7 @@ export type ExchangeFormValues = {
   status: "Pending" | "Completed" | "Cancelled";
 };
 
-const emptyOwner: OwnerFields = { name: "", cnic: "", phone: "", address: "" };
+const emptyOwner: OwnerFields = { name: "", fatherName: "", cnic: "", phone: "", address: "" };
 
 const emptyValues: ExchangeFormValues = {
   showroomCar: {
@@ -85,9 +98,12 @@ const emptyValues: ExchangeFormValues = {
     registrationCity: "",
     localNumber: "",
     chassisNumber: "",
+    engineNumber: "",
     mileage: "",
     condition: "Used",
     actualValue: "",
+    color: "",
+    powerCC: "",
     salePrice: "",
     value: "",
     dealerName: "",
@@ -102,7 +118,10 @@ const emptyValues: ExchangeFormValues = {
     registrationCity: "",
     localNumber: "",
     chassisNumber: "",
+    engineNumber: "",
     mileage: "",
+    color: "",
+    powerCC: "",
     condition: "Used",
     actualValue: "",
     value: "",
@@ -241,10 +260,12 @@ export function ExchangeForm({
         registrationCity: c.registrationCity || "",
         localNumber: c.localNumber || "",
         salePrice: c.salePrice || "",
+        engineNumber: c.engineNumber || "",
         value: v.showroomCar.value || c.salePrice || "",
         dealerName: c.dealerName || "",
         owner: {
           name: c.dealerName || c.userName || "",
+          fatherName: c.userFatherName || "",
           cnic: c.userCnic || "",
           phone: c.userPhone || "",
           address: c.userAddress || "",
@@ -486,6 +507,14 @@ export function ExchangeForm({
                     />
                   </div>
                   <div className="space-y-1.5">
+                    <Label>Father's Name</Label>
+                    <Input
+                      value={values.showroomCar.owner.fatherName}
+                      onChange={(e) => updateShowroomOwner({ fatherName: e.target.value })}
+                      placeholder="Hassan Ali"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
                     <Label>CNIC</Label>
                     <Input
                       value={values.showroomCar.owner.cnic}
@@ -606,12 +635,37 @@ export function ExchangeForm({
                 />
               </div>
               <div className="space-y-1.5">
+                <Label>Engine Number</Label>
+                <Input
+                  value={values.showroomCar.engineNumber}
+                  onChange={(e) => updateShowroomManual({ engineNumber: e.target.value })}
+                  placeholder="Optional"
+                />
+              </div>
+              <div className="space-y-1.5">
                 <Label>Mileage (km)</Label>
                 <Input
                   type="number"
                   value={values.showroomCar.mileage}
                   onChange={(e) => updateShowroomManual({ mileage: e.target.value })}
                   placeholder="65000"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Color</Label>
+                <Input
+                  value={values.showroomCar.color}
+                  onChange={(e) => updateShowroomManual({ color: e.target.value })}
+                  placeholder="e.g. White, Silver"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Power (CC)</Label>
+                <Input
+                  type="number"
+                  value={values.showroomCar.powerCC}
+                  onChange={(e) => updateShowroomManual({ powerCC: e.target.value })}
+                  placeholder="e.g. 1800"
                 />
               </div>
               <div className="space-y-1.5">
@@ -689,6 +743,14 @@ export function ExchangeForm({
                   onChange={(e) => updateCustomerOwner({ name: e.target.value })}
                   placeholder={isStockSource ? "Imran Sheikh" : "Sara Khan"}
                   required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Father's Name</Label>
+                <Input
+                  value={values.customerCar.owner.fatherName}
+                  onChange={(e) => updateCustomerOwner({ fatherName: e.target.value })}
+                  placeholder="Muhammad Sheikh"
                 />
               </div>
               <div className="space-y-1.5">
@@ -811,12 +873,37 @@ export function ExchangeForm({
             />
           </div>
           <div className="space-y-1.5">
+            <Label>Engine Number</Label>
+            <Input
+              value={values.customerCar.engineNumber}
+              onChange={(e) => updateCustomerCar({ engineNumber: e.target.value })}
+              placeholder="Optional"
+            />
+          </div>
+          <div className="space-y-1.5">
             <Label>Mileage (km)</Label>
             <Input
               type="number"
               value={values.customerCar.mileage}
               onChange={(e) => updateCustomerCar({ mileage: e.target.value })}
               placeholder="65000"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Color</Label>
+            <Input
+              value={values.customerCar.color}
+              onChange={(e) => updateCustomerCar({ color: e.target.value })}
+              placeholder="e.g. White, Silver"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Power (CC)</Label>
+            <Input
+              type="number"
+              value={values.customerCar.powerCC}
+              onChange={(e) => updateCustomerCar({ powerCC: e.target.value })}
+              placeholder="e.g. 1800"
             />
           </div>
           <div className="space-y-1.5">
