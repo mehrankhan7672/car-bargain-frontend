@@ -735,7 +735,7 @@ function ViewExchange() {
                           onClick={() => {
                             const now = new Date();
                             setFilterMonth(
-                              `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`
+                              `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`,
                             );
                           }}
                         >
@@ -757,7 +757,7 @@ function ViewExchange() {
                         onClick={() => {
                           const now = new Date();
                           setFilterMonth(
-                            `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`
+                            `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`,
                           );
                           setSearchQuery("");
                         }}
@@ -839,7 +839,7 @@ function ViewExchange() {
                                     <Badge
                                       variant="outline"
                                       className={`rounded-full border px-2.5 py-0.5 font-medium ${methodBadgeClasses(
-                                        p.method
+                                        p.method,
                                       )}`}
                                     >
                                       {p.method || "Cash"}
@@ -865,7 +865,7 @@ function ViewExchange() {
                             ? "0 of 0"
                             : `${(currentPage - 1) * rowsPerPage + 1}-${Math.min(
                                 currentPage * rowsPerPage,
-                                sortedPayments.length
+                                sortedPayments.length,
                               )} of ${sortedPayments.length}`}
                         </span>
                         <div className="flex items-center gap-3">
@@ -914,7 +914,9 @@ function ViewExchange() {
                       {/* Totals strip — same card, top border to separate from pagination */}
                       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-t border-border px-5 py-3 text-sm">
                         <span className="text-muted-foreground">
-                          Showing <strong className="text-foreground">{filteredPayments.length}</strong> transaction
+                          Showing{" "}
+                          <strong className="text-foreground">{filteredPayments.length}</strong>{" "}
+                          transaction
                           {filteredPayments.length !== 1 && "s"}
                           {filterMonth &&
                             ` for ${new Date(filterMonth + "-01").toLocaleDateString("en-PK", {
@@ -924,7 +926,8 @@ function ViewExchange() {
                           {searchQuery && ` matching "${searchQuery}"`}
                         </span>
                         <span className="text-muted-foreground">
-                          Total: <strong className="text-primary">{formatPKR(totalFiltered)}</strong>
+                          Total:{" "}
+                          <strong className="text-primary">{formatPKR(totalFiltered)}</strong>
                         </span>
                       </div>
                     </>

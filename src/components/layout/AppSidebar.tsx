@@ -41,9 +41,14 @@ const money = [
   { title: "Expenses", url: "/expenses", icon: Wallet },
 ];
 
-const team = [
+// Base team items (visible to everyone)
+const teamBase = [
   { title: "Employees", url: "/employees", icon: UserCog },
   { title: "Salaries", url: "/salaries", icon: BadgeDollarSign },
+];
+
+// Owner-only items (hidden for staff added by an owner)
+const teamOwnerOnly = [
   { title: "Activity Logs", url: "/logs", icon: ScrollText },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
@@ -64,6 +69,12 @@ export function AppSidebar() {
         .slice(0, 2)
         .toUpperCase()
     : undefined;
+
+  // 🔒 Determine if the logged-in user is a staff member (added by someone else)
+  const isStaff = !!(user?.addedBy && user.addedBy !== null && user.addedBy !== "");
+
+  // Build the team items dynamically based on role
+  const teamItems = isStaff ? teamBase : [...teamBase, ...teamOwnerOnly];
 
   const section = (label: string, items: typeof main) => (
     <SidebarGroup>
@@ -100,7 +111,7 @@ export function AppSidebar() {
       <SidebarContent className="gap-0">
         {section("Main", main)}
         {section("Money", money)}
-        {section("Team", team)}
+        {section("Team", teamItems)}
       </SidebarContent>
       <SidebarFooter className="p-3">
         <SidebarMenu>
